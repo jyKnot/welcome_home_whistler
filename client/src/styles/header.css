@@ -1,0 +1,29 @@
+header {
+  background: #fff;
+  border-bottom: 1px solid #ddd;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+header h1 {
+  margin: 0;
+  color: var(--blue);
+}
+
+nav a {
+  text-decoration: none;
+  color: var(--blue);
+  margin-left: 1.5rem;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+nav a:hover {
+  color: var(--blue-dark);
+}
