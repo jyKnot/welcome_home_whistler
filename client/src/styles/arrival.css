@@ -108,6 +108,7 @@
 .arrival-item {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding: 0.5rem 0;
   border-bottom: 1px solid #e2e8f0;
 }
@@ -129,8 +130,22 @@
 .arrival-item-meta {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  gap: 0.2rem;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.arrival-item-remove {
+  background: none;
+  border: none;
+  color: #b42318;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0 0.25rem;
+  line-height: 1;
+}
+
+.arrival-item-remove:hover {
+  color: #7f1d1d;
 }
 
 .arrival-item-qty {

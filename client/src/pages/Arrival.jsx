@@ -8,7 +8,7 @@ export default function Arrival() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const cartItems = location.state?.cartItems || [];
+  const [cartItems, setCartItems] = useState(location.state?.cartItems || []);
 
   const [addOns, setAddOns] = useState({
     warmHome: false,
@@ -26,6 +26,10 @@ export default function Arrival() {
       [key]: !prev[key],
     }));
   };
+
+    const handleRemoveItem = (id) => {
+    setCartItems((prev) => prev.filter((item) => item.id !== id));
+    };
 
   const total = cartItems.reduce(
     (sum, item) => sum + (item.price || 0) * item.quantity,
@@ -208,6 +212,14 @@ export default function Arrival() {
                       <span className="arrival-item-price">
                         ${(item.price * item.quantity).toFixed(2)}
                       </span>
+                          <button
+                            type="button"
+                            className="arrival-item-remove"
+                            onClick={() => handleRemoveItem(item.id)}
+                            aria-label={`Remove ${item.name} from order`}
+                            >
+                            ✕
+                        </button>
                     </div>
                   </li>
                 ))}

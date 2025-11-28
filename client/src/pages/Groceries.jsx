@@ -2,6 +2,8 @@ import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/groceries.css";
 import CartSidebar from "../components/CartSidebar";
+import { getGroceryPrice } from '../utils/pricing';
+
 
 export default function Groceries() {
   const [items, setItems] = useState([]);
@@ -36,10 +38,16 @@ export default function Groceries() {
           throw new Error(`HTTP ${res.status}`);
         }
 
-        const data = await res.json();
+       const data = await res.json();
+
         if (!cancel) {
-          setItems(data || []);
-        }
+        const withPrices = (data || []).map((item) => ({
+            ...item,
+            price: getGroceryPrice(item),
+        }));
+
+  setItems(withPrices);
+}
       } catch (e) {
         console.error("Groceries fetch error:", e);
         if (!cancel) {
