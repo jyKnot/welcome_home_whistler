@@ -14,16 +14,17 @@ export default function Register() {
     e.preventDefault();
     try {
       const res = await apiClient.post("/auth/register", form);
-      setMessage(res.data.message);
+      setMessage(res.data.message || "Registration successful!");
+      setForm({ name: "", email: "", password: "" });
     } catch (err) {
-      setMessage(err.response?.data?.message || "Something went wrong.");
+      setMessage(err.response?.data?.message || "Something went wrong. Please try again.");
     }
   };
 
   return (
     <section>
-      <h2 style={{ textAlign: "center" }}>Create an Account</h2>
       <form onSubmit={handleSubmit}>
+        <h2>Create an Account</h2>
         <input
           type="text"
           name="name"
@@ -32,6 +33,7 @@ export default function Register() {
           onChange={handleChange}
           required
         />
+
         <input
           type="email"
           name="email"
@@ -40,6 +42,7 @@ export default function Register() {
           onChange={handleChange}
           required
         />
+
         <input
           type="password"
           name="password"
@@ -48,9 +51,10 @@ export default function Register() {
           onChange={handleChange}
           required
         />
+
         <button type="submit">Register</button>
+        {message && <p className="form-message">{message}</p>}
       </form>
-      {message && <p>{message}</p>}
     </section>
   );
 }

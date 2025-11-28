@@ -1,0 +1,140 @@
+:root {
+  --blue: #0066cc;
+  --blue-dark: #004a99;
+  --gray: #f7f9fb;
+  --text: #333;
+  --shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  --radius: 10px;
+}
+
+/* GLOBAL */
+body {
+  font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+  margin: 0;
+  background-color: var(--gray);
+  color: var(--text);
+}
+
+/* HEADER */
+.site-header {
+  background: #fff;
+  box-shadow: var(--shadow);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  color: var(--blue);
+  font-size: 1.4rem;
+  margin: 0;
+}
+
+/* NAVIGATION (DESKTOP) */
+.nav-links {
+  display: flex;
+  gap: 2rem;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: var(--blue);
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.nav-links a:hover {
+  color: var(--blue-dark);
+}
+
+/* HAMBURGER BASE */
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 24px;
+  height: 18px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 20;
+}
+
+.menu-toggle .bar {
+  height: 3px;
+  width: 100%;
+  background-color: var(--blue-dark);
+  border-radius: 3px;
+  transition: all 0.3s ease;
+}
+
+/* HAMBURGER ANIMATION */
+.menu-toggle.open .bar:nth-child(1) {
+  transform: rotate(45deg) translateY(7px);
+}
+
+.menu-toggle.open .bar:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-toggle.open .bar:nth-child(3) {
+  transform: rotate(-45deg) translateY(-7px);
+}
+
+/* MOBILE MENU */
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: flex;
+  }
+
+  .nav-links {
+    position: absolute;
+    top: 65px;
+    right: 0;
+    width: 100%;
+    flex-direction: column;
+    background: white;
+    box-shadow: var(--shadow);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .nav-links.open {
+    max-height: 300px;
+    padding: 1rem 0;
+  }
+
+  .nav-links a {
+    text-align: center;
+    padding: 0.75rem 0;
+    border-top: 1px solid #eee;
+  }
+
+  .nav-links a:first-child {
+    border-top: none;
+  }
+}
+
+/* MAIN + FOOTER */
+.site-main {
+  padding: 2rem;
+  min-height: 80vh;
+}
+
+.site-footer {
+  text-align: center;
+  padding: 1rem 0;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
