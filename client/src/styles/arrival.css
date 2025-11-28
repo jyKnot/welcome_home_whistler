@@ -1,0 +1,162 @@
+/* Two-column responsive layout */
+.arrival-layout {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); /* left wider than right */
+  gap: 2rem;
+  align-items: flex-start; /* top-align both columns */
+}
+
+/* Left column: form */
+.arrival-form-col {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Form labels/inputs */
+.arrival-label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  gap: 0.3rem;
+}
+
+.arrival-label input,
+.arrival-label textarea {
+  padding: 0.8rem;
+  border: 1px solid #d0d7de;
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+
+/* Add-ons section */
+.arrival-addons {
+  margin: 1.5rem 0 1.75rem;
+  padding: 1rem 1rem 0.5rem;
+  border-radius: 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.arrival-addons h3 {
+  margin: 0 0 0.3rem;
+  font-size: 1rem;
+  color: #004a99;
+}
+
+.arrival-addons-hint {
+  margin: 0 0 0.75rem;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.arrival-addon-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  margin-bottom: 0.6rem;
+  cursor: pointer;
+}
+
+.arrival-addon-row input[type="checkbox"] {
+  margin-top: 0.2rem;
+}
+
+.arrival-addon-title {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.arrival-addon-desc {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+/* Right column: summary */
+.arrival-summary-col {
+  align-self: flex-start; /* top aligned */
+}
+
+.arrival-summary-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  padding: 1.5rem;
+}
+
+.arrival-summary-card h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #004a99;
+}
+
+.arrival-muted {
+  color: #94a3b8;
+  font-size: 0.9rem;
+}
+
+/* Items list in summary */
+.arrival-items {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem;
+}
+
+.arrival-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.arrival-item:last-child {
+  border-bottom: none;
+}
+
+.arrival-item-name {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.arrival-item-category {
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+.arrival-item-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.2rem;
+}
+
+.arrival-item-qty {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.arrival-item-price {
+  font-weight: 600;
+}
+
+.arrival-total-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .arrival-layout {
+    grid-template-columns: 1fr; /* stack columns */
+  }
+
+  .arrival-summary-col {
+    order: -1; /* summary above form on mobile */
+  }
+}
