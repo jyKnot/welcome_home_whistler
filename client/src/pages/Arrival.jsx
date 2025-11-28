@@ -17,6 +17,9 @@ export default function Arrival() {
     turndown: false,
   });
 
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+
   const handleAddOnChange = (key) => {
     setAddOns((prev) => ({
       ...prev,
@@ -24,10 +27,18 @@ export default function Arrival() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const total = cartItems.reduce(
+    (sum, item) => sum + (item.price || 0) * item.quantity,
+    0
+  );
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+    setSubmitting(true);
 
     const form = e.target;
+
     const payload = {
       arrivalDate: form.arrivalDate.value,
       arrivalTime: form.arrivalTime.value,
@@ -37,15 +48,33 @@ export default function Arrival() {
       cartItems,
     };
 
-    console.log("Welcome Order payload (frontend only for now):", payload);
-    alert("Welcome Order submitted! (Saving to backend coming soon)");
-    navigate("/");
-  };
+    try {
+      const res = await fetch("http://localhost:4000/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(payload),
+      });
 
-  const total = cartItems.reduce(
-    (sum, item) => sum + (item.price || 0) * item.quantity,
-    0
-  );
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || `Status ${res.status}`);
+      }
+
+      const data = await res.json();
+      console.log("✅ Order created:", data);
+
+      alert("Your Welcome Order has been confirmed!");
+      navigate("/");
+    } catch (err) {
+      console.error("❌ Order submit error:", err);
+      setError(
+        "We couldn't submit your Welcome Order. Please try again shortly."
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <section className="arrival-layout">
@@ -78,14 +107,15 @@ export default function Arrival() {
             <textarea
               name="notes"
               rows={4}
-              placeholder="e.g., We're arriving late, please have lights on and heat set to 21°C."
+              placeholder="e.g., We're arriving late, please have the heat on and lights set low."
             />
           </label>
 
+          {/* Add-ons */}
           <div className="arrival-addons">
             <h3>Home Add-Ons</h3>
             <p className="arrival-addons-hint">
-              Make sure your Whistler home feels warm, welcoming, and ready.
+              Make your Whistler home feel warm and welcoming.
             </p>
 
             <label className="arrival-addon-row">
@@ -97,7 +127,7 @@ export default function Arrival() {
               <div>
                 <div className="arrival-addon-title">Warm the home</div>
                 <div className="arrival-addon-desc">
-                  Pre-heat your home to a cozy temperature before you arrive.
+                  Pre-heat the property before you arrive.
                 </div>
               </div>
             </label>
@@ -111,7 +141,7 @@ export default function Arrival() {
               <div>
                 <div className="arrival-addon-title">Lights on</div>
                 <div className="arrival-addon-desc">
-                  Have key lights turned on for a welcoming, safe arrival.
+                  Ensure the entryway and living room lights are on.
                 </div>
               </div>
             </label>
@@ -125,7 +155,7 @@ export default function Arrival() {
               <div>
                 <div className="arrival-addon-title">Fresh flowers</div>
                 <div className="arrival-addon-desc">
-                  Seasonal bouquet waiting on your kitchen or dining table.
+                  A fresh seasonal bouquet waiting on your table.
                 </div>
               </div>
             </label>
@@ -139,23 +169,28 @@ export default function Arrival() {
               <div>
                 <div className="arrival-addon-title">Turndown service</div>
                 <div className="arrival-addon-desc">
-                  Beds prepared, blinds closed, and the bedroom ready for rest.
+                  Bedrooms prepared with a hotel-style turndown.
                 </div>
               </div>
             </label>
           </div>
 
-          <button type="submit">Confirm Welcome Order</button>
+          {error && <p className="error">{error}</p>}
+
+          <button type="submit" disabled={submitting}>
+            {submitting ? "Submitting…" : "Confirm Welcome Order"}
+          </button>
         </form>
       </div>
 
+      {/* ORDER SUMMARY */}
       <div className="arrival-summary-col">
         <div className="arrival-summary-card">
           <h3>Order Summary</h3>
+
           {cartItems.length === 0 ? (
             <p className="arrival-muted">
-              No groceries attached to this order yet. Go back to Groceries to
-              add items.
+              No groceries added yet — go back to add items.
             </p>
           ) : (
             <>
@@ -164,25 +199,20 @@ export default function Arrival() {
                   <li key={item.id} className="arrival-item">
                     <div>
                       <div className="arrival-item-name">{item.name}</div>
-                      {item.category && (
-                        <div className="arrival-item-category">
-                          {item.category}
-                        </div>
-                      )}
+                      <div className="arrival-item-category">
+                        {item.category}
+                      </div>
                     </div>
                     <div className="arrival-item-meta">
-                      <span className="arrival-item-qty">
-                        × {item.quantity}
+                      <span className="arrival-item-qty">× {item.quantity}</span>
+                      <span className="arrival-item-price">
+                        ${(item.price * item.quantity).toFixed(2)}
                       </span>
-                      {typeof item.price === "number" && (
-                        <span className="arrival-item-price">
-                          ${(item.price * item.quantity).toFixed(2)}
-                        </span>
-                      )}
                     </div>
                   </li>
                 ))}
               </ul>
+
               <div className="arrival-total-row">
                 <span>Total (groceries)</span>
                 <strong>${total.toFixed(2)}</strong>
@@ -194,3 +224,4 @@ export default function Arrival() {
     </section>
   );
 }
+

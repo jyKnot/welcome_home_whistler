@@ -66,6 +66,9 @@
 
 .card-body {
   padding: 1rem 1rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .card-body h3 {
@@ -96,6 +99,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: background 0.2s ease, transform 0.05s ease;
+  margin-top: auto;      /* 👈 this is the magic */
 }
 
 .add-btn:hover {
