@@ -4,11 +4,21 @@ import { useState } from "react";
 import "../styles/form.css";
 import "../styles/arrival.css";
 
+const ADDON_PRICES = {
+  warmHome: 45,
+  lightsOn: 20,
+  flowers: 100,
+  turndown: 75,
+};
+
 export default function Arrival() {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Cart items local state so we can remove them
   const [cartItems, setCartItems] = useState(location.state?.cartItems || []);
+
+  const todayISO = new Date().toISOString().split("T")[0];
 
   const [addOns, setAddOns] = useState({
     warmHome: false,
@@ -21,21 +31,32 @@ export default function Arrival() {
   const [error, setError] = useState("");
 
   const handleAddOnChange = (key) => {
-    setAddOns((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
+    setAddOns((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-    const handleRemoveItem = (id) => {
+  const handleRemoveItem = (id) => {
     setCartItems((prev) => prev.filter((item) => item.id !== id));
-    };
+  };
 
-  const total = cartItems.reduce(
+  // --- TOTALS ---
+  const selectedAddOnEntries = Object.entries(addOns).filter(
+    ([key, isSelected]) => isSelected
+  );
+
+  const addOnsTotal = selectedAddOnEntries.reduce(
+    (sum, [key]) => sum + (ADDON_PRICES[key] || 0),
+    0
+  );
+
+  const groceriesTotal = cartItems.reduce(
     (sum, item) => sum + (item.price || 0) * item.quantity,
     0
   );
 
+  const grandTotal = groceriesTotal + addOnsTotal;
+  const hasItems = cartItems.length > 0;
+
+  // --- SUBMIT ---
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -50,6 +71,11 @@ export default function Arrival() {
       notes: form.notes.value,
       addOns,
       cartItems,
+      totals: {
+        groceries: groceriesTotal,
+        addOns: addOnsTotal,
+        grandTotal,
+      },
     };
 
     try {
@@ -66,15 +92,16 @@ export default function Arrival() {
       }
 
       const data = await res.json();
-      console.log("✅ Order created:", data);
 
-      alert("Your Welcome Order has been confirmed!");
-      navigate("/");
+      navigate("/order-confirmation", {
+        state: {
+          order: data,
+          fallback: payload,
+        },
+      });
     } catch (err) {
-      console.error("❌ Order submit error:", err);
-      setError(
-        "We couldn't submit your Welcome Order. Please try again shortly."
-      );
+      console.error("Order submit error:", err);
+      setError("We couldn't submit your Welcome Order. Please try again shortly.");
     } finally {
       setSubmitting(false);
     }
@@ -82,13 +109,22 @@ export default function Arrival() {
 
   return (
     <section className="arrival-layout">
+      {/* LEFT COLUMN — FORM */}
       <div className="arrival-form-col">
         <form onSubmit={handleSubmit}>
           <h2>Arrival Details</h2>
 
+          <button
+            type="button"
+            className="arrival-back-btn"
+            onClick={() => navigate("/groceries")}
+          >
+            ← Back to groceries
+          </button>
+
           <label className="arrival-label">
             Arrival date
-            <input type="date" name="arrivalDate" required />
+            <input type="date" name="arrivalDate" required min={todayISO} />
           </label>
 
           <label className="arrival-label">
@@ -115,7 +151,7 @@ export default function Arrival() {
             />
           </label>
 
-          {/* Add-ons */}
+          {/* HOME ADD-ONS */}
           <div className="arrival-addons">
             <h3>Home Add-Ons</h3>
             <p className="arrival-addons-hint">
@@ -173,29 +209,23 @@ export default function Arrival() {
               <div>
                 <div className="arrival-addon-title">Turndown service</div>
                 <div className="arrival-addon-desc">
-                  Bedrooms prepared with a hotel-style turndown.
+                  Bedrooms prepared hotel-style for your arrival.
                 </div>
               </div>
             </label>
           </div>
 
           {error && <p className="error">{error}</p>}
-
-          <button type="submit" disabled={submitting}>
-            {submitting ? "Submitting…" : "Confirm Welcome Order"}
-          </button>
         </form>
       </div>
 
-      {/* ORDER SUMMARY */}
+      {/* RIGHT COLUMN — SUMMARY */}
       <div className="arrival-summary-col">
         <div className="arrival-summary-card">
           <h3>Order Summary</h3>
 
           {cartItems.length === 0 ? (
-            <p className="arrival-muted">
-              No groceries added yet — go back to add items.
-            </p>
+            <p className="arrival-muted">No groceries added yet.</p>
           ) : (
             <>
               <ul className="arrival-items">
@@ -203,23 +233,22 @@ export default function Arrival() {
                   <li key={item.id} className="arrival-item">
                     <div>
                       <div className="arrival-item-name">{item.name}</div>
-                      <div className="arrival-item-category">
-                        {item.category}
-                      </div>
+                      <div className="arrival-item-category">{item.category}</div>
                     </div>
+
                     <div className="arrival-item-meta">
                       <span className="arrival-item-qty">× {item.quantity}</span>
                       <span className="arrival-item-price">
                         ${(item.price * item.quantity).toFixed(2)}
                       </span>
-                          <button
-                            type="button"
-                            className="arrival-item-remove"
-                            onClick={() => handleRemoveItem(item.id)}
-                            aria-label={`Remove ${item.name} from order`}
-                            >
-                            ✕
-                        </button>
+
+                      <button
+                        type="button"
+                        className="arrival-item-remove"
+                        onClick={() => handleRemoveItem(item.id)}
+                      >
+                        ✕
+                      </button>
                     </div>
                   </li>
                 ))}
@@ -227,7 +256,55 @@ export default function Arrival() {
 
               <div className="arrival-total-row">
                 <span>Total (groceries)</span>
-                <strong>${total.toFixed(2)}</strong>
+                <strong>${groceriesTotal.toFixed(2)}</strong>
+              </div>
+
+              {selectedAddOnEntries.length > 0 && (
+                <>
+                  <div className="arrival-addons-summary-header">
+                    Home add-ons
+                  </div>
+
+                  <ul className="arrival-addons-summary">
+                    {selectedAddOnEntries.map(([key]) => (
+                      <li key={key} className="arrival-addon-summary-item">
+                        <span className="arrival-addon-summary-name">
+                          {key === "warmHome" && "Warm the home"}
+                          {key === "lightsOn" && "Lights on"}
+                          {key === "flowers" && "Fresh flowers"}
+                          {key === "turndown" && "Turndown service"}
+                        </span>
+                        <span className="arrival-addon-summary-price">
+                          ${ADDON_PRICES[key].toFixed(2)}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div className="arrival-total-row">
+                    <span>Total (add-ons)</span>
+                    <strong>${addOnsTotal.toFixed(2)}</strong>
+                  </div>
+                </>
+              )}
+
+              <div className="arrival-total-row arrival-grand-total">
+                <span>Grand total</span>
+                <strong>${grandTotal.toFixed(2)}</strong>
+              </div>
+
+              {/* SUBMIT BUTTON (now under summary) */}
+              <div className="arrival-summary-footer">
+                <button
+                  className="arrival-summary-btn"
+                  onClick={() => {
+                    const form = document.querySelector("form");
+                    if (form) form.requestSubmit();
+                  }}
+                  disabled={!hasItems || submitting}
+                >
+                  {submitting ? "Submitting…" : "Confirm Welcome Order"}
+                </button>
               </div>
             </>
           )}
@@ -236,4 +313,3 @@ export default function Arrival() {
     </section>
   );
 }
-
