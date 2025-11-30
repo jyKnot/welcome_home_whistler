@@ -5,20 +5,19 @@ import "../styles/header.css";
 
 export default function Header() {
   const [user, setUser] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
     try {
       const stored = localStorage.getItem("whwUser");
-      if (stored) {
-        setUser(JSON.parse(stored));
-      } else {
-        setUser(null);
-      }
+      if (stored) setUser(JSON.parse(stored));
+      else setUser(null);
     } catch {
       setUser(null);
     }
+    setMenuOpen(false);
   }, [location.pathname]);
 
   const handleLogout = async () => {
@@ -27,68 +26,167 @@ export default function Header() {
         method: "POST",
         credentials: "include",
       });
-    } catch (err) {
-      console.error("Logout error (continuing anyway):", err);
-    } finally {
+    } catch {}
+    finally {
       localStorage.removeItem("whwUser");
       setUser(null);
       navigate("/");
     }
   };
 
-  const isAuthPage =
-    location.pathname === "/login" || location.pathname === "/register";
+  const path = location.pathname;
 
   return (
-    <header className="whw-header">
-      <div className="whw-header-inner">
-        <button
-          className="whw-brand"
-          type="button"
-          onClick={() => navigate("/")}  
-        >
-          <span className="whw-brand-mark">🏔️</span>
-          <span className="whw-brand-text">Welcome Home Whistler</span>
-        </button>
+    <>
+      <header className="whw-header">
+        <div className="whw-header-inner">
+          {/* Brand */}
+          <button className="whw-brand" onClick={() => navigate("/")}>
+            <span className="whw-brand-mark">🏔️</span>
+            <span className="whw-brand-text">Welcome Home Whistler</span>
+          </button>
 
-        <nav className="whw-nav">
-          {!user ? (
-            !isAuthPage && (
+          {/* Desktop Nav */}
+          <nav className="whw-nav whw-nav-desktop">
+            {/* Unified button style */}
+            <button
+              className={
+                "whw-nav-btn" +
+                (path.startsWith("/groceries") ||
+                path === "/arrival" ||
+                path === "/order-confirmation"
+                  ? " whw-nav-btn-active"
+                  : "")
+              }
+              onClick={() => navigate("/groceries")}
+            >
+              Start order
+            </button>
+
+            {!user ? (
               <>
-                <Link to="/login" className="whw-nav-link">
+                <Link
+                  to="/login"
+                  className={
+                    "whw-nav-btn" + (path === "/login" ? " whw-nav-btn-active" : "")
+                  }
+                >
                   Sign in
                 </Link>
-                <Link to="/register" className="whw-nav-cta">
+
+                <Link
+                  to="/register"
+                  className={
+                    "whw-nav-btn" + (path === "/register" ? " whw-nav-btn-active" : "")
+                  }
+                >
                   Create account
                 </Link>
               </>
-            )
-          ) : (
-            <>
-              <span className="whw-user-label">
-                Hi,&nbsp;
-                <strong>{user.name || user.email || "Guest"}</strong>
-              </span>
+            ) : (
+              <>
+                <button
+                  className={
+                    "whw-nav-btn" +
+                    (path === "/my-orders" ? " whw-nav-btn-active" : "")
+                  }
+                  onClick={() => navigate("/my-orders")}
+                >
+                  My orders
+                </button>
 
-              <button
-                type="button"
-                className="whw-nav-link"
-                onClick={() => navigate("/my-orders")}
-              >
-                My orders
-              </button>
+                <button className="whw-nav-link-quiet" onClick={handleLogout}>
+                  Log out
+                </button>
+              </>
+            )}
+          </nav>
 
-              <button
-                type="button"
-                className="whw-nav-link"
-                onClick={handleLogout}
-              >
-                Log out
-              </button>
-            </>
-          )}
-        </nav>
-      </div>
-    </header>
+          {/* Mobile toggle */}
+          <button
+            className="whw-nav-toggle"
+            onClick={() => setMenuOpen((prev) => !prev)}
+          >
+            {menuOpen ? "✕" : "☰"}
+          </button>
+        </div>
+
+        {/* Mobile menu */}
+        {menuOpen && (
+          <div className="whw-nav-mobile">
+            <button
+              className={
+                "whw-nav-mobile-btn" +
+                (path.startsWith("/groceries") ||
+                path === "/arrival" ||
+                path === "/order-confirmation"
+                  ? " whw-nav-mobile-btn-active"
+                  : "")
+              }
+              onClick={() => navigate("/groceries")}
+            >
+              Start order
+            </button>
+
+            {!user ? (
+              <>
+                <Link
+                  className={
+                    "whw-nav-mobile-btn" +
+                    (path === "/login" ? " whw-nav-mobile-btn-active" : "")
+                  }
+                  to="/login"
+                >
+                  Sign in
+                </Link>
+
+                <Link
+                  className={
+                    "whw-nav-mobile-btn" +
+                    (path === "/register" ? " whw-nav-mobile-btn-active" : "")
+                  }
+                  to="/register"
+                >
+                  Create account
+                </Link>
+              </>
+            ) : (
+              <>
+                <button
+                  className={
+                    "whw-nav-mobile-btn" +
+                    (path === "/my-orders" ? " whw-nav-mobile-btn-active" : "")
+                  }
+                  onClick={() => navigate("/my-orders")}
+                >
+                  My orders
+                </button>
+
+                <button className="whw-nav-mobile-btn" onClick={handleLogout}>
+                  Log out
+                </button>
+              </>
+            )}
+          </div>
+        )}
+      </header>
+
+      {/* Signed-in banner */}
+      {user && (
+        <div className="whw-account-bar">
+          <div className="whw-account-bar-inner">
+            <span>
+              Signed in as <strong>{user.name || user.email}</strong>
+            </span>
+            <button
+              className="whw-account-bar-link"
+              onClick={() => navigate("/my-orders")}
+            >
+              View my orders
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

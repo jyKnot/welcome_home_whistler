@@ -1,4 +1,6 @@
-/* client/src/styles/header.css */
+/* -------------------------------------- */
+/* HEADER WRAPPER                         */
+/* -------------------------------------- */
 
 .whw-header {
   position: sticky;
@@ -14,10 +16,13 @@
   margin: 0 auto;
   padding: 0.6rem 1.25rem;
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  align-items: center;
 }
+
+/* -------------------------------------- */
+/* BRAND                                  */
+/* -------------------------------------- */
 
 .whw-brand {
   display: inline-flex;
@@ -25,84 +30,136 @@
   gap: 0.45rem;
   background: none;
   border: none;
-  padding: 0;
+  color: #e5e7eb;
   cursor: pointer;
-  color: inherit;
-}
-
-.whw-brand-mark {
-  font-size: 1.35rem;
 }
 
 .whw-brand-text {
-  font-size: 1rem;
   font-weight: 600;
-  letter-spacing: 0.03em;
 }
 
-.whw-nav {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-size: 0.9rem;
-}
+/* -------------------------------------- */
+/* NAV BUTTONS (Unified style)            */
+/* -------------------------------------- */
 
-.whw-nav-link {
-  border: none;
-  background: none;
-  color: #e5e7eb;
-  text-decoration: none;
-  padding: 0.3rem 0.5rem;
-  cursor: pointer;
-  border-radius: 999px;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-
-.whw-nav-link:hover {
-  background: rgba(148, 163, 184, 0.25);
-}
-
-.whw-nav-cta {
+.whw-nav-btn,
+.whw-nav-mobile-btn {
+  display: inline-block;
   padding: 0.35rem 0.9rem;
   border-radius: 999px;
-  background: #3b82f6;
-  border: none;
-  color: #f9fafb;
-  font-weight: 600;
-  text-decoration: none;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: background 0.15s ease, transform 0.05s ease;
-}
-
-.whw-nav-cta:hover {
-  background: #2563eb;
-}
-
-.whw-nav-cta:active {
-  transform: scale(0.97);
-}
-
-.whw-user-label {
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  background: transparent;
   color: #e5e7eb;
   font-size: 0.9rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s ease, border 0.15s ease;
 }
 
-/* Mobile */
-@media (max-width: 640px) {
-  .whw-header-inner {
-    padding: 0.5rem 0.75rem;
+.whw-nav-btn:hover,
+.whw-nav-mobile-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Active state */
+.whw-nav-btn-active,
+.whw-nav-mobile-btn-active {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 1px #3b82f6;
+  background: rgba(59, 130, 246, 0.15);
+}
+
+/* Quiet logout link */
+.whw-nav-link-quiet {
+  background: none;
+  border: none;
+  color: #93a4c7;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.whw-nav-link-quiet:hover {
+  color: white;
+}
+
+/* -------------------------------------- */
+/* MOBILE NAV                             */
+/* -------------------------------------- */
+
+.whw-nav-desktop {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.whw-nav-toggle {
+  display: none;
+  background: none;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  border-radius: 8px;
+  padding: 0.25rem 0.5rem;
+  color: #e5e7eb;
+  cursor: pointer;
+}
+
+.whw-nav-mobile {
+  display: none;
+  background: #0d1424;
+  border-top: 1px solid rgba(148, 163, 184, 0.4);
+}
+
+.whw-nav-mobile-btn {
+  width: 100%;
+  text-align: left;
+  padding: 0.75rem 1.25rem;
+}
+
+/* -------------------------------------- */
+/* SIGNED-IN BANNER                       */
+/* -------------------------------------- */
+
+.whw-account-bar {
+  background: #020617;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.4);
+}
+
+.whw-account-bar-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0.4rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.whw-account-bar-link {
+  background: none;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  color: #e5e7eb;
+  cursor: pointer;
+}
+
+/* -------------------------------------- */
+/* RESPONSIVE                             */
+/* -------------------------------------- */
+
+@media (max-width: 768px) {
+  .whw-nav-desktop {
+    display: none;
   }
 
+  .whw-nav-toggle {
+    display: inline-block;
+  }
+
+  .whw-nav-mobile {
+    display: block;
+  }
+}
+
+@media (max-width: 480px) {
   .whw-brand-text {
-    font-size: 0.9rem;
-  }
-
-  .whw-nav {
-    gap: 0.5rem;
-  }
-
-  .whw-user-label {
-    display: none; /* stay minimal on tiny screens */
+    display: none;
   }
 }
