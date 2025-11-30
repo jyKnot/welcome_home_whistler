@@ -1,60 +1,154 @@
+// client/src/pages/Register.jsx
 import { useState } from "react";
-import apiClient from "../api/apiClient";
+import { useNavigate, Link } from "react-router-dom";
 import "../styles/form.css";
+import "../styles/arrival.css";
 
 export default function Register() {
-  const [form, setForm] = useState({ name: "", email: "", password: "" });
-  const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+    setSubmitting(true);
+
     try {
-      const res = await apiClient.post("/auth/register", form);
-      setMessage(res.data.message || "Registration successful!");
-      setForm({ name: "", email: "", password: "" });
+      const res = await fetch("http://localhost:4000/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include", // so JWT cookie is set
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      if (!res.ok) {
+        let message = "Registration failed. Please check your details.";
+        try {
+          const data = await res.json();
+          if (data?.message) message = data.message;
+        } catch {
+          // ignore JSON parse issues
+        }
+        throw new Error(message);
+      }
+
+      const user = await res.json();
+
+      // Save user locally if you want to reflect logged-in state
+      localStorage.setItem("whwUser", JSON.stringify(user));
+
+      // After register, send them to home or groceries
+      navigate("/");
     } catch (err) {
-      setMessage(err.response?.data?.message || "Something went wrong. Please try again.");
+      console.error("Register error:", err);
+      setError(err.message || "Registration failed. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
-    <section>
-      <form onSubmit={handleSubmit}>
-        <h2>Create an Account</h2>
-        <input
-          type="text"
-          name="name"
-          placeholder="Full Name"
-          value={form.name}
-          onChange={handleChange}
-          required
-        />
+    <section className="arrival-layout">
+      <div className="arrival-form-col">
+        <form onSubmit={handleSubmit}>
+          <h2>Create your account</h2>
+          <p className="arrival-muted">
+            Save your Whistler property details and re-use your Welcome Orders.
+          </p>
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={handleChange}
-          required
-        />
+          <label className="arrival-label">
+            Name
+            <input
+              type="text"
+              name="name"
+              autoComplete="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </label>
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={form.password}
-          onChange={handleChange}
-          required
-        />
+          <label className="arrival-label">
+            Email
+            <input
+              type="email"
+              name="email"
+              autoComplete="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </label>
 
-        <button type="submit">Register</button>
-        {message && <p className="form-message">{message}</p>}
-      </form>
+          <label className="arrival-label">
+            Password
+            <input
+              type="password"
+              name="password"
+              autoComplete="new-password"
+              required
+              minLength={6}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </label>
+
+          {error && (
+            <p className="error" style={{ marginTop: "0.5rem" }}>
+              {error}
+            </p>
+          )}
+
+          <button
+            type="submit"
+            disabled={submitting}
+            style={{ marginTop: "1rem" }}
+          >
+            {submitting ? "Creating account…" : "Create account"}
+          </button>
+
+          <p
+            className="arrival-muted"
+            style={{ marginTop: "0.75rem", fontSize: "0.85rem" }}
+          >
+            Already have an account?{" "}
+            <Link to="/login">Sign in instead</Link>.
+          </p>
+
+          <button
+            type="button"
+            className="arrival-back-btn"
+            onClick={() => navigate("/")}
+            style={{ marginTop: "1rem" }}
+          >
+            ← Back to home
+          </button>
+        </form>
+      </div>
+
+      <div className="arrival-summary-col">
+        <div className="arrival-summary-card">
+          <h3>What gets saved?</h3>
+          <p className="arrival-muted">
+            In a full version of this app, your account could store:
+          </p>
+          <ul className="arrival-items">
+            <li className="arrival-item">
+              <div className="arrival-item-name">Preferred property address</div>
+            </li>
+            <li className="arrival-item">
+              <div className="arrival-item-name">Favourite grocery lists</div>
+            </li>
+            <li className="arrival-item">
+              <div className="arrival-item-name">Past Welcome Orders</div>
+            </li>
+          </ul>
+        </div>
+      </div>
     </section>
   );
 }

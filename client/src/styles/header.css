@@ -1,29 +1,108 @@
-header {
-  background: #fff;
-  border-bottom: 1px solid #ddd;
-  box-shadow: var(--shadow);
+/* client/src/styles/header.css */
+
+.whw-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: #0b1120;
+  color: #e5e7eb;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.4);
+}
+
+.whw-header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0.6rem 1.25rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem 2rem;
-  position: sticky;
-  top: 0;
-  z-index: 10;
+  gap: 1rem;
 }
 
-header h1 {
-  margin: 0;
-  color: var(--blue);
+.whw-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: inherit;
 }
 
-nav a {
+.whw-brand-mark {
+  font-size: 1.35rem;
+}
+
+.whw-brand-text {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.whw-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.whw-nav-link {
+  border: none;
+  background: none;
+  color: #e5e7eb;
   text-decoration: none;
-  color: var(--blue);
-  margin-left: 1.5rem;
-  font-weight: 500;
-  transition: color 0.2s ease;
+  padding: 0.3rem 0.5rem;
+  cursor: pointer;
+  border-radius: 999px;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 
-nav a:hover {
-  color: var(--blue-dark);
+.whw-nav-link:hover {
+  background: rgba(148, 163, 184, 0.25);
+}
+
+.whw-nav-cta {
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  background: #3b82f6;
+  border: none;
+  color: #f9fafb;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.15s ease, transform 0.05s ease;
+}
+
+.whw-nav-cta:hover {
+  background: #2563eb;
+}
+
+.whw-nav-cta:active {
+  transform: scale(0.97);
+}
+
+.whw-user-label {
+  color: #e5e7eb;
+  font-size: 0.9rem;
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .whw-header-inner {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .whw-brand-text {
+    font-size: 0.9rem;
+  }
+
+  .whw-nav {
+    gap: 0.5rem;
+  }
+
+  .whw-user-label {
+    display: none; /* stay minimal on tiny screens */
+  }
 }
