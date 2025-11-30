@@ -1,33 +1,24 @@
 // server/routes/orderRoutes.js
 import express from "express";
+import {
+  createOrder,
+  getOrderById,
+  getOrdersForCurrentUser,
+} from "../controllers/orderController.js";
+import { requireAuth } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
+// Create a new order
 // POST /api/orders
-// For now: just validate, log, and echo back the order
-router.post("/", (req, res) => {
-  const { arrivalDate, arrivalTime, address, notes, addOns, cartItems } = req.body;
+router.post("/", createOrder);
 
-  if (!arrivalDate || !address) {
-    return res
-      .status(400)
-      .json({ message: "Arrival date and address are required." });
-  }
+// Get a specific order by id
+// GET /api/orders/:id
+router.get("/:id", getOrderById);
 
-  const order = {
-    id: Date.now().toString(), // temporary ID until MongoDB
-    arrivalDate,
-    arrivalTime: arrivalTime || "",
-    address,
-    notes: notes || "",
-    addOns: addOns || {},
-    cartItems: cartItems || [],
-    createdAt: new Date().toISOString(),
-  };
-
-  console.log("📦 New Welcome Order received:", order);
-
-  return res.status(201).json(order);
-});
+// Get all orders for the current user (requires auth)
+// GET /api/orders
+router.get("/", requireAuth, getOrdersForCurrentUser);
 
 export default router;
