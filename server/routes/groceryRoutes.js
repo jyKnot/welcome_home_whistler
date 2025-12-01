@@ -2,7 +2,7 @@ import express from "express";
 import axios from "axios";
 const router = express.Router();
 
-router.get("/products", async (_req, res) => {
+router.get("/", async (_req, res) => {
   try {
     const r = await axios.get("https://simple-grocery-store-api.glitch.me/products");
     res.json(r.data);
