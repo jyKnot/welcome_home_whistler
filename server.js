@@ -8,10 +8,26 @@ import morgan from "morgan";
 import authRoutes from "./server/routes/authRoutes.js";
 import groceryRoutes from "./server/routes/groceryRoutes.js";
 import orderRoutes from "./server/routes/orderRoutes.js";
+import mongoose from "mongoose";
 
 dotenv.config();
 
 const app = express();
+
+console.log("Loaded MONGODB_URI:", process.env.MONGODB_URI);
+
+
+// Connect to MongoDB
+mongoose
+  .connect(process.env.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("MongoDB connected successfully"))
+  .catch((err) => {
+    console.error("MongoDB connection error:", err);
+    process.exit(1);
+  });
 
 // middleware
 app.use(helmet());
