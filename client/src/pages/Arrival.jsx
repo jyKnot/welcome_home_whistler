@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import "../styles/form.css";
 import "../styles/arrival.css";
+import { createOrder } from "../api/orders";
 
 const ADDON_PRICES = {
   warmHome: 45,
@@ -64,34 +65,33 @@ export default function Arrival() {
 
     const form = e.target;
 
+    // 🔴 Build payload in the shape your Order schema expects
     const payload = {
-      arrivalDate: form.arrivalDate.value,
-      arrivalTime: form.arrivalTime.value,
-      address: form.address.value,
-      notes: form.notes.value,
+      arrival: {
+        date: form.arrivalDate.value,
+        time: form.arrivalTime.value,
+        address: form.address.value,
+        notes: form.notes.value,
+      },
+      items: cartItems.map((item) => ({
+        productId: item.id,
+        name: item.name,
+        category: item.category,
+        price: item.price,
+        quantity: item.quantity,
+      })),
       addOns,
-      cartItems,
       totals: {
         groceries: groceriesTotal,
         addOns: addOnsTotal,
         grandTotal,
       },
+      // user: we'll plug this in later once auth is wired up
     };
 
     try {
-      const res = await fetch("http://localhost:4000/api/orders", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(payload),
-      });
-
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(text || `Status ${res.status}`);
-      }
-
-      const data = await res.json();
+      // uses axios apiClient under the hood, hitting POST /api/orders
+      const data = await createOrder(payload);
 
       navigate("/order-confirmation", {
         state: {
@@ -101,7 +101,9 @@ export default function Arrival() {
       });
     } catch (err) {
       console.error("Order submit error:", err);
-      setError("We couldn't submit your Welcome Order. Please try again shortly.");
+      setError(
+        "We couldn't submit your Welcome Order. Please try again shortly."
+      );
     } finally {
       setSubmitting(false);
     }
@@ -233,11 +235,15 @@ export default function Arrival() {
                   <li key={item.id} className="arrival-item">
                     <div>
                       <div className="arrival-item-name">{item.name}</div>
-                      <div className="arrival-item-category">{item.category}</div>
+                      <div className="arrival-item-category">
+                        {item.category}
+                      </div>
                     </div>
 
                     <div className="arrival-item-meta">
-                      <span className="arrival-item-qty">× {item.quantity}</span>
+                      <span className="arrival-item-qty">
+                        × {item.quantity}
+                      </span>
                       <span className="arrival-item-price">
                         ${(item.price * item.quantity).toFixed(2)}
                       </span>

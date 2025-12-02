@@ -1,5 +1,5 @@
 // src/api/orders.js
-import apiClient from "./apiClient";
+import { apiClient } from "./apiClient.js";
 
 export async function createOrder(orderData) {
   try {

@@ -30,9 +30,7 @@ export default function Groceries() {
         setLoading(true);
         setErr("");
 
-        const res = await fetch(
-          "http://localhost:4000/api/groceries/products"
-        );
+        const res = await fetch("http://localhost:4000/api/groceries");
 
         if (!res.ok) {
           throw new Error(`HTTP ${res.status}`);
