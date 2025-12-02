@@ -44,15 +44,17 @@ export default function OrderConfirmation() {
     );
   }
 
-  const {
-    arrivalDate,
-    arrivalTime,
-    address,
-    notes,
-    addOns = {},
-    cartItems = [],
-    totals: orderTotals = {},
-  } = order;
+  // 🔴 NEW: read nested arrival/items/addOns/totals shape
+  const arrival = order.arrival || fallbackPayload?.arrival || {};
+  const addOns = order.addOns || fallbackPayload?.addOns || {};
+  const items = order.items || fallbackPayload?.items || [];
+
+  const orderTotals = order.totals || fallbackPayload?.totals || {};
+
+  const arrivalDate = arrival.date || "Not specified";
+  const arrivalTime = arrival.time || "Not specified";
+  const address = arrival.address || "Not specified";
+  const notes = arrival.notes || "";
 
   // ---- TOTALS: prefer server totals, otherwise fallback, otherwise recalc ----
   const fallbackTotals = fallbackPayload?.totals || {};
@@ -73,7 +75,7 @@ export default function OrderConfirmation() {
   const groceriesTotal =
     typeof rawTotals.groceries === "number"
       ? rawTotals.groceries
-      : cartItems.reduce(
+      : items.reduce(
           (sum, item) => sum + (item.price || 0) * item.quantity,
           0
         );
@@ -115,17 +117,17 @@ export default function OrderConfirmation() {
 
           <div className="arrival-confirm-row">
             <span>Arrival date</span>
-            <strong>{arrivalDate || "Not specified"}</strong>
+            <strong>{arrivalDate}</strong>
           </div>
 
           <div className="arrival-confirm-row">
             <span>Arrival time</span>
-            <strong>{arrivalTime || "Not specified"}</strong>
+            <strong>{arrivalTime}</strong>
           </div>
 
           <div className="arrival-confirm-row">
             <span>Property address</span>
-            <strong>{address || "Not specified"}</strong>
+            <strong>{address}</strong>
           </div>
 
           {notes && (
@@ -152,15 +154,18 @@ export default function OrderConfirmation() {
           <h3>Order Summary</h3>
 
           {/* Groceries */}
-          {cartItems.length === 0 ? (
+          {items.length === 0 ? (
             <p className="arrival-muted">
               No groceries were included in this order.
             </p>
           ) : (
             <>
               <ul className="arrival-items">
-                {cartItems.map((item) => (
-                  <li key={item.id} className="arrival-item">
+                {items.map((item) => (
+                  <li
+                    key={item.id || item.productId || item._id}
+                    className="arrival-item"
+                  >
                     <div>
                       <div className="arrival-item-name">{item.name}</div>
                       <div className="arrival-item-category">
@@ -227,5 +232,3 @@ export default function OrderConfirmation() {
     </section>
   );
 }
-
-

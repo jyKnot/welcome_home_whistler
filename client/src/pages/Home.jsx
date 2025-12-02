@@ -1,10 +1,25 @@
 // client/src/pages/Home.jsx
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import "../styles/arrival.css";
 import "../styles/form.css";
 
 export default function Home() {
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("whwUser");
+      if (stored) {
+        setUser(JSON.parse(stored));
+      }
+    } catch (err) {
+      console.error("Error reading whwUser from localStorage:", err);
+    }
+  }, []);
+
+  const isLoggedIn = !!user;
 
   return (
     <section className="arrival-layout">
@@ -19,7 +34,14 @@ export default function Home() {
           and we&apos;ll have everything ready before you walk in the door.
         </p>
 
-        <div style={{ marginTop: "1.5rem", display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+        <div
+          style={{
+            marginTop: "1.5rem",
+            display: "flex",
+            gap: "0.75rem",
+            flexWrap: "wrap",
+          }}
+        >
           <button
             type="button"
             onClick={() => navigate("/groceries")}
@@ -30,16 +52,24 @@ export default function Home() {
 
           <button
             type="button"
-            className="arrival-back-btn"
-            onClick={() => navigate("/login")}
+            className="arrival-summary-btn"
+            onClick={() =>
+              isLoggedIn ? navigate("/orders") : navigate("/login")
+            }
           >
-            Sign in to view my orders
+            {isLoggedIn ? "View my orders" : "Sign in to view my orders"}
           </button>
         </div>
 
         <div style={{ marginTop: "2rem" }}>
           <h3 style={{ marginBottom: "0.5rem" }}>How it works</h3>
-          <ol style={{ paddingLeft: "1.25rem", margin: 0, fontSize: "0.92rem" }}>
+          <ol
+            style={{
+              paddingLeft: "1.25rem",
+              margin: 0,
+              fontSize: "0.92rem",
+            }}
+          >
             <li style={{ marginBottom: "0.35rem" }}>
               <strong>Build your grocery basket</strong> with essentials, wine,
               and arrival treats.
@@ -49,56 +79,14 @@ export default function Home() {
               lights on, flowers, or turndown service.
             </li>
             <li>
-              <strong>Confirm your Welcome Order</strong> with arrival date,
+              <strong>Confirm your Order</strong> with arrival date,
               time, and property address.
             </li>
           </ol>
         </div>
       </div>
 
-      {/* RIGHT: Feature card */}
-      <div className="arrival-summary-col">
-        <div className="arrival-summary-card">
-          <h3>Designed for Whistler second homeowners</h3>
-          <p className="arrival-muted" style={{ marginBottom: "0.75rem" }}>
-            This capstone project simulates a real-world arrival concierge
-            service:
-          </p>
-          <ul className="arrival-items">
-            <li className="arrival-item">
-              <div className="arrival-item-name">Mobile-first React frontend</div>
-              <div className="arrival-item-category">
-                Built with a modern MERN stack and REST APIs.
-              </div>
-            </li>
-            <li className="arrival-item">
-              <div className="arrival-item-name">Smart grocery selection</div>
-              <div className="arrival-item-category">
-                Filter, search, and add items to a live-updating cart.
-              </div>
-            </li>
-            <li className="arrival-item">
-              <div className="arrival-item-name">Arrival &amp; add-on workflow</div>
-              <div className="arrival-item-category">
-                Warm the home, switch on lights, and add fresh flowers or
-                turndown service.
-              </div>
-            </li>
-            <li className="arrival-item">
-              <div className="arrival-item-name">Account &amp; order history</div>
-              <div className="arrival-item-category">
-                Log in, place Welcome Orders, and review them on the My Orders
-                page.
-              </div>
-            </li>
-          </ul>
-
-          <p className="arrival-muted" style={{ marginTop: "0.75rem", fontSize: "0.85rem" }}>
-            For demo purposes, this is a student project for a full-stack
-            JavaScript bootcamp, not a live concierge service.
-          </p>
-        </div>
-      </div>
+      {/* RIGHT column intentionally empty for now */}
     </section>
   );
 }
