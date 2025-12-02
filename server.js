@@ -14,22 +14,31 @@ dotenv.config();
 
 const app = express();
 
-console.log("Loaded MONGODB_URI:", process.env.MONGODB_URI);
+// -------------------------------------------
+// 🧪 TEST ENVIRONMENT HANDLING
+// -------------------------------------------
+const isTest = process.env.NODE_ENV === "test";
+
+// -------------------------------------------
+// MONGO CONNECTION (DISABLED IN TESTS)
+
+if (!isTest) {
+  console.log("Connecting to MongoDB...");
+
+  mongoose
+    .connect(process.env.MONGODB_URI)
+    .then(() => console.log("MongoDB connected successfully"))
+    .catch((err) => {
+      console.error("MongoDB connection error:", err);
+      process.exit(1);
+    });
+} else {
+  console.log("MongoDB connection skipped in test environment");
+}
 
 
-// Connect to MongoDB
-mongoose
-  .connect(process.env.MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("MongoDB connected successfully"))
-  .catch((err) => {
-    console.error("MongoDB connection error:", err);
-    process.exit(1);
-  });
+// MIDDLEWARE
 
-// middleware
 app.use(helmet());
 app.use(morgan("dev"));
 app.use(
@@ -41,6 +50,9 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
+
+//  ROUTES
+
 app.use("/api/auth", authRoutes);
 app.use("/api/groceries", groceryRoutes);
 app.use("/api/orders", orderRoutes);
@@ -49,12 +61,16 @@ app.get("/", (req, res) => {
   res.send("Welcome Home Whistler API running locally!");
 });
 
-// export the app for Jest
+
+// EXPORT APP FOR JEST (no server running)
+
 export default app;
 
-// only start the server when NOT running tests
-const PORT = process.env.PORT || 4000;
-if (process.env.NODE_ENV !== "test") {
+
+// START SERVER (ONLY OUTSIDE TEST)
+
+if (!isTest) {
+  const PORT = process.env.PORT || 4000;
   app.listen(PORT, () => {
     console.log(`Server running locally on port ${PORT}`);
   });

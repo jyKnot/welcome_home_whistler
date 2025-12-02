@@ -20,7 +20,6 @@ export default function Register() {
     try {
       const storedUser = localStorage.getItem("whwUser");
       if (storedUser) {
-        // Already signed in → send to My Orders
         navigate("/my-orders");
         return;
       }
@@ -50,7 +49,7 @@ export default function Register() {
       const res = await fetch("http://localhost:4000/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include", // so JWT cookie is set
+        credentials: "include",
         body: JSON.stringify({ name, email, password }),
       });
 
@@ -60,21 +59,18 @@ export default function Register() {
           const data = await res.json();
           if (data?.message) message = data.message;
         } catch {
-          // ignore JSON parse issues
         }
         throw new Error(message);
       }
 
       const user = await res.json();
 
-      // Save user locally so the app knows we're logged in
       localStorage.setItem("whwUser", JSON.stringify(user));
 
-      // After register, send them to My Orders
       navigate("/my-orders");
-    } catch (err) {
-      console.error("Register error:", err);
-      setError(err.message || "Registration failed. Please try again.");
+    } catch (error) {
+      console.error("Error occurred:", error);
+      setError(error.message || "Registration failed. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -155,26 +151,6 @@ export default function Register() {
             ← Back to home
           </button>
         </form>
-      </div>
-
-      <div className="arrival-summary-col">
-        <div className="arrival-summary-card">
-          <h3>What gets saved?</h3>
-          <p className="arrival-muted">
-            In a full version of this app, your account could store:
-          </p>
-          <ul className="arrival-items">
-            <li className="arrival-item">
-              <div className="arrival-item-name">Preferred property address</div>
-            </li>
-            <li className="arrival-item">
-              <div className="arrival-item-name">Favourite grocery lists</div>
-            </li>
-            <li className="arrival-item">
-              <div className="arrival-item-name">Past Welcome Orders</div>
-            </li>
-          </ul>
-        </div>
       </div>
     </section>
   );

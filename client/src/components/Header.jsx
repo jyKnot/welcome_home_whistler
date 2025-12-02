@@ -14,8 +14,9 @@ export default function Header() {
       const stored = localStorage.getItem("whwUser");
       if (stored) setUser(JSON.parse(stored));
       else setUser(null);
-    } catch {
-      setUser(null);
+    } catch (error) {
+      console.error("Error retrieving user from localStorage:", error);
+      // Handle the error appropriately, e.g., show a message to the user
     }
     setMenuOpen(false);
   }, [location.pathname]);
@@ -26,7 +27,9 @@ export default function Header() {
         method: "POST",
         credentials: "include",
       });
-    } catch {}
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
     finally {
       localStorage.removeItem("whwUser");
       setUser(null);

@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "../styles/form.css";
 import "../styles/arrival.css";
-import { createOrder } from "../api/orders";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -64,8 +63,9 @@ export default function Login() {
       localStorage.setItem("whwUser", JSON.stringify(user));
 
       navigate("/");
-    } catch (err) {
-      setError(err.message || "Login failed. Please try again.");
+    } catch (error) {
+      console.error("Error during login:", error);
+      setError("An error occurred. Please try again.");
     } finally {
       setSubmitting(false);
     }
