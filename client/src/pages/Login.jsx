@@ -2,39 +2,32 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "../styles/form.css";
-import "../styles/arrival.css"; // re-use card + layout styles
+import "../styles/arrival.css";
+import { createOrder } from "../api/orders";
 
 export default function Login() {
   const navigate = useNavigate();
 
-  // Form state
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-
-  // NEW: show/hide password
   const [showPassword, setShowPassword] = useState(false);
-
-  // NEW: redirect if already logged in
   const [checkingUser, setCheckingUser] = useState(true);
 
   useEffect(() => {
     try {
       const storedUser = localStorage.getItem("whwUser");
       if (storedUser) {
-        // Already signed in → send to My Orders
-        navigate("/my-orders");
+        navigate("/");
         return;
       }
-    } catch (err) {
-      console.error("Error reading whwUser from localStorage:", err);
-    } finally {
+    } catch {}
+    finally {
       setCheckingUser(false);
     }
   }, [navigate]);
 
-  // Prevent flashing the login form before redirect
   if (checkingUser) {
     return (
       <section className="arrival-layout">
@@ -54,32 +47,24 @@ export default function Login() {
       const res = await fetch("http://localhost:4000/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include", // important so cookie is set
+        credentials: "include",
         body: JSON.stringify({ email, password }),
       });
 
       if (!res.ok) {
-        // Try to read a message from the server if available
         let message = "Login failed. Please check your credentials.";
         try {
           const data = await res.json();
           if (data?.message) message = data.message;
-        } catch {
-          // ignore JSON parse errors
-        }
+        } catch {}
         throw new Error(message);
       }
 
-      // Successful login → user object returned
       const user = await res.json();
-
-      // Save locally
       localStorage.setItem("whwUser", JSON.stringify(user));
 
-      // Navigate to My Orders
-      navigate("/my-orders");
+      navigate("/");
     } catch (err) {
-      console.error("Login error:", err);
       setError(err.message || "Login failed. Please try again.");
     } finally {
       setSubmitting(false);
@@ -91,63 +76,46 @@ export default function Login() {
       <div className="arrival-form-col">
         <form onSubmit={handleSubmit}>
           <h2>Sign in</h2>
-          <p className="arrival-muted">
-            Log in to manage your Welcome Orders and arrival details.
-          </p>
+          <p className="arrival-muted">Log in to manage your Welcome Orders.</p>
 
           <label className="arrival-label">
             Email
             <input
               type="email"
-              name="email"
-              autoComplete="email"
               required
               value={email}
+              autoComplete="email"
               onChange={(e) => setEmail(e.target.value)}
             />
           </label>
 
-     <label className="arrival-label">
+          <label className="arrival-label">
             Password
             <div className="password-wrapper">
-                <input
+              <input
                 type={showPassword ? "text" : "password"}
-                name="password"
-                autoComplete="current-password"
                 required
+                autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                />
-                <span
+              />
+              <span
                 className="password-eye"
-                onClick={() => setShowPassword((prev) => !prev)}
-                >
+                onClick={() => setShowPassword((p) => !p)}
+              >
                 {showPassword ? "🙈" : "👁️"}
-                </span>
+              </span>
             </div>
-        </label>
+          </label>
 
+          {error && <p className="error">{error}</p>}
 
-
-          {error && (
-            <p className="error" style={{ marginTop: "0.5rem" }}>
-              {error}
-            </p>
-          )}
-
-          <button
-            type="submit"
-            disabled={submitting}
-            style={{ marginTop: "1rem" }}
-          >
+          <button type="submit" disabled={submitting}>
             {submitting ? "Signing in…" : "Sign in"}
           </button>
 
-          <p
-            className="arrival-muted"
-            style={{ marginTop: "0.75rem", fontSize: "0.85rem" }}
-          >
-            Don&apos;t have an account yet?{" "}
+          <p className="arrival-muted">
+            Don&apos;t have an account?{" "}
             <Link to="/register">Create one here.</Link>
           </p>
 
@@ -155,7 +123,6 @@ export default function Login() {
             type="button"
             className="arrival-back-btn"
             onClick={() => navigate("/")}
-            style={{ marginTop: "1rem" }}
           >
             ← Back to home
           </button>
@@ -166,22 +133,8 @@ export default function Login() {
         <div className="arrival-summary-card">
           <h3>Why sign in?</h3>
           <p className="arrival-muted">
-            In the full version of Welcome Home Whistler, signing in will let
-            you:
+            Signing in will let you save preferences and view past orders.
           </p>
-          <ul className="arrival-items">
-            <li className="arrival-item">
-              <div className="arrival-item-name">Save arrival preferences</div>
-            </li>
-            <li className="arrival-item">
-              <div className="arrival-item-name">Re-use past Welcome Orders</div>
-            </li>
-            <li className="arrival-item">
-              <div className="arrival-item-name">
-                Quickly confirm upcoming visits
-              </div>
-            </li>
-          </ul>
         </div>
       </div>
     </section>

@@ -2,8 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/groceries.css";
 import CartSidebar from "../components/CartSidebar";
-import { getGroceryPrice } from '../utils/pricing';
-
+import { getGroceryPrice } from "../utils/pricing";
 
 export default function Groceries() {
   const [items, setItems] = useState([]);
@@ -15,12 +14,22 @@ export default function Groceries() {
   const [cartItems, setCartItems] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
 
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
-  const handleContinueToArrival = () => {
-  navigate("/arrival", { state: { cartItems } });
-};
+  // Load logged-in user from localStorage
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("whwUser");
+      if (stored) setUser(JSON.parse(stored));
+    } catch {}
+  }, []);
 
+  const isLoggedIn = !!user;
+
+  const handleContinueToArrival = () => {
+    navigate("/arrival", { state: { cartItems } });
+  };
 
   useEffect(() => {
     let cancel = false;
@@ -32,29 +41,22 @@ export default function Groceries() {
 
         const res = await fetch("http://localhost:4000/api/groceries");
 
-        if (!res.ok) {
-          throw new Error(`HTTP ${res.status}`);
-        }
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-       const data = await res.json();
+        const data = await res.json();
 
         if (!cancel) {
-        const withPrices = (data || []).map((item) => ({
+          const withPrices = (data || []).map((item) => ({
             ...item,
             price: getGroceryPrice(item),
-        }));
-
-  setItems(withPrices);
-}
+          }));
+          setItems(withPrices);
+        }
       } catch (e) {
         console.error("Groceries fetch error:", e);
-        if (!cancel) {
-          setErr("Could not load groceries.");
-        }
+        if (!cancel) setErr("Could not load groceries.");
       } finally {
-        if (!cancel) {
-          setLoading(false);
-        }
+        if (!cancel) setLoading(false);
       }
     };
 
@@ -161,19 +163,50 @@ export default function Groceries() {
         onIncrement={handleIncrement}
         onDecrement={handleDecrement}
         onRemove={handleRemove}
-        onContinue={handleContinueToArrival} 
+        onContinue={handleContinueToArrival}
       />
 
       {/* Overlay behind cart */}
-      {cartOpen && (
-        <div
-          className="cart-overlay"
-          onClick={() => setCartOpen(false)}
-        />
-      )}
+      {cartOpen && <div className="cart-overlay" onClick={() => setCartOpen(false)} />}
 
       {/* Main groceries content */}
       <div className="groceries-wrap">
+
+        {/* 🚨 WARNING BANNER (only when not logged in) */}
+        {!isLoggedIn && (
+          <div
+            style={{
+              background: "#f1f5f9",
+              padding: "0.9rem 1.1rem",
+              borderRadius: "10px",
+              marginBottom: "1.25rem",
+              border: "1px solid #e2e8f0",
+              fontSize: "0.92rem",
+              color: "#334155",
+            }}
+          >
+            <strong>Heads up!</strong> You’ll need an account to submit your
+            Welcome Order.
+            <br />
+            <button
+              onClick={() => navigate("/login")}
+              style={{
+                background: "none",
+                border: "none",
+                color: "#004a99",
+                cursor: "pointer",
+                textDecoration: "underline",
+                padding: 0,
+                fontSize: "0.92rem",
+                marginTop: "0.35rem",
+              }}
+            >
+              Sign in or create one
+            </button>
+            {" "}before continuing to arrival details.
+          </div>
+        )}
+
         <div className="filters">
           <input
             value={q}

@@ -16,7 +16,7 @@ export async function createOrder(orderData) {
       "Failed to create order. Please try again.";
 
     if (error?.response?.status === 401) {
-      message = "Please sign in to place an order.";
+        message = "Please sign in or create an account to place your Welcome Order.";
     }
 
     throw new Error(message);

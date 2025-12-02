@@ -16,9 +16,7 @@ export default function Arrival() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Cart items local state so we can remove them
   const [cartItems, setCartItems] = useState(location.state?.cartItems || []);
-
   const todayISO = new Date().toISOString().split("T")[0];
 
   const [addOns, setAddOns] = useState({
@@ -39,9 +37,8 @@ export default function Arrival() {
     setCartItems((prev) => prev.filter((item) => item.id !== id));
   };
 
-  // --- TOTALS ---
   const selectedAddOnEntries = Object.entries(addOns).filter(
-    ([key, isSelected]) => isSelected
+    ([, isSelected]) => isSelected
   );
 
   const addOnsTotal = selectedAddOnEntries.reduce(
@@ -57,15 +54,12 @@ export default function Arrival() {
   const grandTotal = groceriesTotal + addOnsTotal;
   const hasItems = cartItems.length > 0;
 
-  // --- SUBMIT ---
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setSubmitting(true);
 
     const form = e.target;
-
-    // 🔴 Build payload in the shape your Order schema expects
     const payload = {
       arrival: {
         date: form.arrivalDate.value,
@@ -86,24 +80,25 @@ export default function Arrival() {
         addOns: addOnsTotal,
         grandTotal,
       },
-      // user: we'll plug this in later once auth is wired up
     };
 
     try {
-      // uses axios apiClient under the hood, hitting POST /api/orders
       const data = await createOrder(payload);
 
       navigate("/order-confirmation", {
-        state: {
-          order: data,
-          fallback: payload,
-        },
+        state: { order: data, fallback: payload },
       });
     } catch (err) {
-      console.error("Order submit error:", err);
-      setError(
-        "We couldn't submit your Welcome Order. Please try again shortly."
-      );
+      const msg =
+        err.message ||
+        "We couldn't submit your Welcome Order. Please try again shortly.";
+
+      // Save the order so they don’t lose progress
+      if (msg.includes("sign in")) {
+        localStorage.setItem("pendingOrder", JSON.stringify(payload));
+      }
+
+      setError(msg);
     } finally {
       setSubmitting(false);
     }
@@ -111,7 +106,6 @@ export default function Arrival() {
 
   return (
     <section className="arrival-layout">
-      {/* LEFT COLUMN — FORM */}
       <div className="arrival-form-col">
         <form onSubmit={handleSubmit}>
           <h2>Arrival Details</h2>
@@ -149,11 +143,10 @@ export default function Arrival() {
             <textarea
               name="notes"
               rows={4}
-              placeholder="e.g., We're arriving late, please have the heat on and lights set low."
+              placeholder="e.g., We're arriving late, please have the heat on."
             />
           </label>
 
-          {/* HOME ADD-ONS */}
           <div className="arrival-addons">
             <h3>Home Add-Ons</h3>
             <p className="arrival-addons-hint">
@@ -183,7 +176,7 @@ export default function Arrival() {
               <div>
                 <div className="arrival-addon-title">Lights on</div>
                 <div className="arrival-addon-desc">
-                  Ensure the entryway and living room lights are on.
+                  Entryway + living room lights on.
                 </div>
               </div>
             </label>
@@ -197,7 +190,7 @@ export default function Arrival() {
               <div>
                 <div className="arrival-addon-title">Fresh flowers</div>
                 <div className="arrival-addon-desc">
-                  A fresh seasonal bouquet waiting on your table.
+                  Seasonal bouquet placed on your table.
                 </div>
               </div>
             </label>
@@ -211,17 +204,47 @@ export default function Arrival() {
               <div>
                 <div className="arrival-addon-title">Turndown service</div>
                 <div className="arrival-addon-desc">
-                  Bedrooms prepared hotel-style for your arrival.
+                  Bedrooms prepared hotel-style.
                 </div>
               </div>
             </label>
           </div>
 
-          {error && <p className="error">{error}</p>}
+          {error && (
+            <div style={{ marginTop: "1rem" }}>
+              <p className="error">{error}</p>
+
+              {error.includes("sign in") && (
+                <div
+                  style={{
+                    marginTop: "0.75rem",
+                    display: "flex",
+                    gap: "0.5rem",
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <button
+                    type="button"
+                    className="arrival-summary-btn"
+                    onClick={() => navigate("/login")}
+                  >
+                    Sign in
+                  </button>
+
+                  <button
+                    type="button"
+                    className="arrival-summary-btn"
+                    onClick={() => navigate("/register")}
+                  >
+                    Create account
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </form>
       </div>
 
-      {/* RIGHT COLUMN — SUMMARY */}
       <div className="arrival-summary-col">
         <div className="arrival-summary-card">
           <h3>Order Summary</h3>
@@ -299,7 +322,6 @@ export default function Arrival() {
                 <strong>${grandTotal.toFixed(2)}</strong>
               </div>
 
-              {/* SUBMIT BUTTON (now under summary) */}
               <div className="arrival-summary-footer">
                 <button
                   className="arrival-summary-btn"

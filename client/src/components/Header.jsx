@@ -172,21 +172,19 @@ export default function Header() {
       </header>
 
       {/* Signed-in banner */}
+            {/* Signed-in banner */}
       {user && (
         <div className="whw-account-bar">
           <div className="whw-account-bar-inner">
             <span>
               Signed in as <strong>{user.name || user.email}</strong>
             </span>
-            <button
-              className="whw-account-bar-link"
-              onClick={() => navigate("/my-orders")}
-            >
-              View my orders
-            </button>
+            {/* Removed extra 'View my orders' button to avoid duplication,
+                since it's already in the top-right nav */}
           </div>
         </div>
       )}
+
     </>
   );
 }

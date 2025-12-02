@@ -12,7 +12,11 @@ export default function Home() {
     try {
       const stored = localStorage.getItem("whwUser");
       if (stored) {
-        setUser(JSON.parse(stored));
+        const parsed = JSON.parse(stored);
+        console.log("Home loaded user from localStorage:", parsed);
+        setUser(parsed);
+      } else {
+        console.log("Home: no whwUser in localStorage");
       }
     } catch (err) {
       console.error("Error reading whwUser from localStorage:", err);
@@ -20,6 +24,7 @@ export default function Home() {
   }, []);
 
   const isLoggedIn = !!user;
+  console.log("Home isLoggedIn =", isLoggedIn);
 
   return (
     <section className="arrival-layout">
@@ -50,15 +55,17 @@ export default function Home() {
             Start a Welcome Order
           </button>
 
-          <button
-            type="button"
-            className="arrival-summary-btn"
-            onClick={() =>
-              isLoggedIn ? navigate("/my-orders") : navigate("/login")
-            }
-          >
-            {isLoggedIn ? "View my orders" : "Sign in to view my orders"}
-          </button>
+          {/* Only show this second button when logged OUT.
+              When logged in, the top-right 'My Orders' is enough. */}
+          {!isLoggedIn && (
+            <button
+              type="button"
+              className="arrival-summary-btn"
+              onClick={() => navigate("/login")}
+            >
+              Sign in to view my orders
+            </button>
+          )}
         </div>
 
         <div style={{ marginTop: "2rem" }}>
@@ -79,8 +86,8 @@ export default function Home() {
               lights on, flowers, or turndown service.
             </li>
             <li>
-              <strong>Confirm your Order</strong> with arrival date,
-              time, and property address.
+              <strong>Confirm your Order</strong> with arrival date, time, and
+              property address.
             </li>
           </ol>
         </div>
