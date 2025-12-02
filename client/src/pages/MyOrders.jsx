@@ -3,11 +3,13 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/arrival.css";
 import "../styles/form.css";
+import { getMyOrders } from "../api/orders.js";
 
 export default function MyOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [expandedOrderId, setExpandedOrderId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,29 +20,21 @@ export default function MyOrders() {
         setLoading(true);
         setError("");
 
-        const res = await fetch("http://localhost:4000/api/orders", {
-          method: "GET",
-          credentials: "include",
-        });
+        const data = await getMyOrders(); // GET /api/orders/my
 
-        if (res.status === 401) {
-          // Not logged in → send to login
-          navigate("/login");
-          return;
-        }
-
-        if (!res.ok) {
-          throw new Error(`Failed to load orders (status ${res.status})`);
-        }
-
-        const data = await res.json();
         if (!isCancelled) {
           setOrders(Array.isArray(data) ? data : []);
         }
       } catch (err) {
         console.error("MyOrders fetch error:", err);
         if (!isCancelled) {
-          setError("We couldn't load your orders. Please try again shortly.");
+          if (err.message === "Please sign in to view your orders.") {
+            navigate("/login");
+          } else {
+            setError(
+              "We couldn't load your orders. Please try again shortly."
+            );
+          }
         }
       } finally {
         if (!isCancelled) {
@@ -66,6 +60,10 @@ export default function MyOrders() {
     } catch {
       return isoOrString;
     }
+  };
+
+  const toggleExpanded = (orderId) => {
+    setExpandedOrderId((current) => (current === orderId ? null : orderId));
   };
 
   return (
@@ -104,18 +102,29 @@ export default function MyOrders() {
           {!loading && !error && orders.length > 0 && (
             <ul className="arrival-items">
               {orders.map((order) => {
-                const { _id, arrival, totals, items } = order;
+                const { _id, arrival, totals, items, createdAt, addOns } =
+                  order;
                 const itemCount = items?.reduce(
                   (sum, item) => sum + (item.quantity || 0),
                   0
                 );
                 const firstFew = (items || []).slice(0, 3);
+                const isExpanded = expandedOrderId === _id;
 
                 return (
-                  <li key={_id} className="arrival-item">
+                  <li
+                    key={_id}
+                    className="arrival-item"
+                    onClick={() => toggleExpanded(_id)}
+                    style={{ cursor: "pointer" }}
+                  >
                     <div>
                       <div className="arrival-item-name">
-                        Arrival: {formatDate(arrival?.date)}
+                        Order placed on {formatDate(createdAt)}
+                      </div>
+                      <div className="arrival-item-category">
+                        Arrival: {formatDate(arrival?.date)}{" "}
+                        {arrival?.time ? `at ${arrival.time}` : ""}
                       </div>
                       <div className="arrival-item-category">
                         {arrival?.address || "No address specified"}
@@ -138,7 +147,8 @@ export default function MyOrders() {
 
                     <div className="arrival-item-meta">
                       <span className="arrival-item-qty">
-                        {itemCount || 0} item{(itemCount || 0) === 1 ? "" : "s"}
+                        {itemCount || 0} item
+                        {(itemCount || 0) === 1 ? "" : "s"}
                       </span>
                       <span className="arrival-item-price">
                         $
@@ -147,6 +157,68 @@ export default function MyOrders() {
                           : "0.00"}
                       </span>
                     </div>
+
+                    {isExpanded && (
+                      <div
+                        style={{
+                          marginTop: "0.75rem",
+                          paddingTop: "0.75rem",
+                          borderTop: "1px solid rgba(148, 163, 184, 0.4)",
+                          fontSize: "0.9rem",
+                          width: "100%",
+                        }}
+                        onClick={(e) => e.stopPropagation()} // avoid toggle loop
+                      >
+                        <h4
+                          style={{
+                            margin: "0 0 0.5rem",
+                            fontSize: "0.95rem",
+                            fontWeight: 600,
+                          }}
+                        >
+                          Order details
+                        </h4>
+                        <p className="arrival-muted" style={{ margin: 0 }}>
+                          Items:
+                        </p>
+                        <ul style={{ margin: "0.25rem 0 0.5rem 1.1rem" }}>
+                          {(items || []).map((item, idx) => (
+                            <li key={item.productId || idx}>
+                              {item.quantity || 1} × {item.name}{" "}
+                              {item.price != null &&
+                                `( $${item.price.toFixed(2)} each )`}
+                            </li>
+                          ))}
+                        </ul>
+
+                        <p className="arrival-muted" style={{ margin: 0 }}>
+                          Add-ons:
+                        </p>
+                        <ul style={{ margin: "0.25rem 0 0.5rem 1.1rem" }}>
+                          {addOns?.warmHome && <li>Warm home</li>}
+                          {addOns?.lightsOn && <li>Lights on</li>}
+                          {addOns?.flowers && <li>Fresh flowers</li>}
+                          {addOns?.turndown && <li>Turndown service</li>}
+                          {!addOns ||
+                            (!addOns.warmHome &&
+                              !addOns.lightsOn &&
+                              !addOns.flowers &&
+                              !addOns.turndown && <li>No add-ons selected</li>)}
+                        </ul>
+
+                        <p
+                          style={{
+                            margin: 0,
+                            fontWeight: 600,
+                          }}
+                        >
+                          Total: $
+                          {totals?.grandTotal != null
+                            ? totals.grandTotal.toFixed(2)
+                            : "0.00"}
+                        </p>
+                      </div>
+                    )}
                   </li>
                 );
               })}

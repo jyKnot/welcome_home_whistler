@@ -54,7 +54,7 @@ export default function Home() {
             type="button"
             className="arrival-summary-btn"
             onClick={() =>
-              isLoggedIn ? navigate("/orders") : navigate("/login")
+              isLoggedIn ? navigate("/my-orders") : navigate("/login")
             }
           >
             {isLoggedIn ? "View my orders" : "Sign in to view my orders"}

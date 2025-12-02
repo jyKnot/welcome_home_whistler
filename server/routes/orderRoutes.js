@@ -7,19 +7,10 @@ const router = express.Router();
 
 /**
  * POST /api/orders
- * Create a new order
+ * Create a new order (must be logged in)
  */
-router.post("/", async (req, res) => {
+router.post("/", requireAuth, async (req, res) => {
   try {
-    // req.body should match the shape of your Order schema:
-    // {
-    //   user,               // optional (user id)
-    //   arrival: { date, time, address, notes },
-    //   items: [ { productId, name, category, price, quantity }, ... ],
-    //   addOns: { warmHome, lightsOn, flowers, turndown },
-    //   totals: { groceries, addOns, grandTotal }
-    // }
-
     const orderData = req.body;
 
     // Basic guard: must have at least one item
@@ -33,15 +24,17 @@ router.post("/", async (req, res) => {
         .json({ message: "Order must include at least one item." });
     }
 
-    // Create and save the order
-    const order = new Order(orderData);
-    const savedOrder = await order.save();
+    // 🔑 Attach the logged-in user to the order
+    const order = new Order({
+      ...orderData,
+      user: req.user._id,
+    });
 
+    const savedOrder = await order.save();
     return res.status(201).json(savedOrder);
   } catch (err) {
     console.error("Error creating order:", err);
 
-    // Handle Mongoose validation errors nicely
     if (err.name === "ValidationError") {
       const messages = Object.values(err.errors).map((e) => e.message);
       return res.status(400).json({

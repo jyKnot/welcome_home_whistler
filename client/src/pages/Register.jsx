@@ -1,5 +1,5 @@
 // client/src/pages/Register.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "../styles/form.css";
 import "../styles/arrival.css";
@@ -12,6 +12,34 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+
+  // NEW: redirect if already logged in
+  const [checkingUser, setCheckingUser] = useState(true);
+
+  useEffect(() => {
+    try {
+      const storedUser = localStorage.getItem("whwUser");
+      if (storedUser) {
+        // Already signed in → send to My Orders
+        navigate("/my-orders");
+        return;
+      }
+    } catch (err) {
+      console.error("Error reading whwUser from localStorage:", err);
+    } finally {
+      setCheckingUser(false);
+    }
+  }, [navigate]);
+
+  if (checkingUser) {
+    return (
+      <section className="arrival-layout">
+        <div className="arrival-form-col">
+          <p className="arrival-muted">Checking your sign-in status…</p>
+        </div>
+      </section>
+    );
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -39,11 +67,11 @@ export default function Register() {
 
       const user = await res.json();
 
-      // Save user locally if you want to reflect logged-in state
+      // Save user locally so the app knows we're logged in
       localStorage.setItem("whwUser", JSON.stringify(user));
 
-      // After register, send them to home or groceries
-      navigate("/");
+      // After register, send them to My Orders
+      navigate("/my-orders");
     } catch (err) {
       console.error("Register error:", err);
       setError(err.message || "Registration failed. Please try again.");
@@ -115,8 +143,7 @@ export default function Register() {
             className="arrival-muted"
             style={{ marginTop: "0.75rem", fontSize: "0.85rem" }}
           >
-            Already have an account?{" "}
-            <Link to="/login">Sign in instead</Link>.
+            Already have an account? <Link to="/login">Sign in instead</Link>.
           </p>
 
           <button
