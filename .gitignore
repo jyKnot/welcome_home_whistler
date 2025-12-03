@@ -1,0 +1,49 @@
+#  Node / Express backend
+node_modules/
+.env
+.env.local
+.env.*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Logs
+logs
+*.log
+npm-debug.log*
+debug.log*
+error.log*
+
+# Coverage directory (testing)
+coverage/
+
+# Build outputs
+dist/
+build/
+.cache/
+tmp/
+temp/
+
+# Mac / OS generated files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editor directories and files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+#  React frontend (Vite)
+client/node_modules/
+client/dist/
+client/.env
+client/.env.local
+client/.env.*.local
+
+#  Optional artifacts
+*.bak
+*.old
+*.swp
+*.zip
