@@ -1,4 +1,3 @@
-// client/src/pages/Home.jsx
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import "../styles/home.css";

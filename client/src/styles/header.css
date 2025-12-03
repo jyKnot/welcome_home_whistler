@@ -1,7 +1,5 @@
 
-/* HEADER WRAPPER  */
-
-
+/* header wrapper  */
 .whw-header {
   position: sticky;
   top: 0;
@@ -21,8 +19,7 @@
 }
 
 
-/* BRAND  */
-
+/* brand  */
 .whw-brand {
   display: inline-flex;
   align-items: center;
@@ -38,9 +35,7 @@
 }
 
 
-/* NAV BUTTONS (Unified style)  */
-
-
+/* nav buttons (Unified style)  */
 .whw-nav-btn,
 .whw-nav-mobile-btn {
   display: inline-block;
@@ -68,7 +63,7 @@
   background: rgba(59, 130, 246, 0.15);
 }
 
-/* Quiet logout link */
+/* quiet logout link */
 .whw-nav-link-quiet {
   background: none;
   border: none;
@@ -81,9 +76,7 @@
   color: white;
 }
 
-
-/* MOBILE NAV                             */
-
+/* mobile nav */
 .whw-nav-desktop {
   display: flex;
   gap: 0.75rem;
@@ -111,10 +104,8 @@
   padding: 0.75rem 1.25rem;
 }
 
-/* -------------------------------------- */
-/* SIGNED-IN BANNER                       */
-/* -------------------------------------- */
 
+/* signed-n banner */
 .whw-account-bar {
   background: #020617;
   border-bottom: 1px solid rgba(148, 163, 184, 0.4);
@@ -138,10 +129,8 @@
   cursor: pointer;
 }
 
-/* -------------------------------------- */
-/* RESPONSIVE                             */
-/* -------------------------------------- */
 
+/* responsive */
 @media (max-width: 768px) {
   .whw-nav-desktop {
     display: none;

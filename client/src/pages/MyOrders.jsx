@@ -1,4 +1,3 @@
-// client/src/pages/MyOrders.jsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/arrival.css";
@@ -56,7 +55,6 @@ export default function MyOrders() {
           throw new Error("Failed to fetch orders.");
         }
 
-        // Read raw text first to see if it's HTML or JSON
         const text = await res.text();
         console.log("[MyOrders] Raw response from /api/orders/my:", text);
 
@@ -135,7 +133,7 @@ export default function MyOrders() {
   };
 
   return (
-    <section className="arrival-layout">
+    <section className="arrival-layout myorders-layout">
       <div className="arrival-form-col">
         <h2>My Welcome Orders</h2>
         <p className="arrival-muted">

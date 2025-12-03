@@ -17,7 +17,7 @@ export default function Groceries() {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
-  // Load logged-in user
+  // load logged-in user
   useEffect(() => {
     try {
       const stored = localStorage.getItem("whwUser");
@@ -31,7 +31,7 @@ export default function Groceries() {
     navigate("/arrival", { state: { cartItems } });
   };
 
-  // Fetch groceries
+  // fetch groceries
   useEffect(() => {
     let cancel = false;
 
@@ -152,7 +152,7 @@ export default function Groceries() {
 
   return (
     <>
-      {/* Cart sidebar */}
+      {/* cart sidebar */}
       <CartSidebar
         isOpen={cartOpen}
         items={cartItems}
@@ -163,13 +163,13 @@ export default function Groceries() {
         onContinue={handleContinueToArrival}
       />
 
-      {/* Overlay */}
+      {/* overlay */}
       {cartOpen && <div className="cart-overlay" onClick={() => setCartOpen(false)} />}
 
-      {/* Main groceries content */}
+      {/* main groceries content */}
       <div className="groceries-wrap">
 
-        {/* 🚨 WARNING banner when not logged in */}
+        {/* WARNING banner when not logged in */}
         {!isLoggedIn && (
           <div
             style={{
@@ -204,7 +204,7 @@ export default function Groceries() {
           </div>
         )}
 
-        {/* ⭐ NEW: Skip Groceries button */}
+        {/* skip Groceries button */}
         <div
           style={{
             marginBottom: "1.25rem",
@@ -229,7 +229,7 @@ export default function Groceries() {
           </button>
         </div>
 
-        {/* Filters */}
+        {/* filters */}
         <div className="filters">
           <input
             value={q}
@@ -273,7 +273,7 @@ export default function Groceries() {
         )}
       </div>
 
-      {/* Floating "view order" btn */}
+      {/* floating "view order" btn */}
       {totalItems > 0 && (
         <button
           className="cart-floating-btn"

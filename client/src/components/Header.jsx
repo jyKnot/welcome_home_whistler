@@ -1,4 +1,3 @@
-// client/src/components/Header.jsx
 import { useEffect, useState } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import "../styles/header.css";
@@ -16,7 +15,7 @@ export default function Header() {
       else setUser(null);
     } catch (error) {
       console.error("Error retrieving user from localStorage:", error);
-      // Handle the error appropriately, e.g., show a message to the user
+      // handle the error appropriately, eg: show a message to the user
     }
     setMenuOpen(false);
   }, [location.pathname]);

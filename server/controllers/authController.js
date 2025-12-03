@@ -1,4 +1,3 @@
-// server/controllers/authController.js
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/userModel.js";
@@ -70,7 +69,7 @@ export async function login(req, res) {
 
     const user = await User.findOne({ email });
     if (!user || !user.passwordHash) {
-      // Don't reveal which part failed
+      // don't reveal which part failed
       return res.status(401).json({ message: "Invalid credentials." });
     }
 

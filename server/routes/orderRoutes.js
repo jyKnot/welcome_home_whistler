@@ -1,14 +1,11 @@
-// server/routes/orderRoutes.js
 import express from "express";
 import Order from "../models/Order.js";
 import { requireAuth } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-/**
- * POST /api/orders
- * Create a new order
- */
+
+ /* POST /api/orders - Create a new order */
 router.post("/", requireAuth, async (req, res) => {
   try {
     const {
@@ -21,7 +18,7 @@ router.post("/", requireAuth, async (req, res) => {
       totals,
     } = req.body;
 
-    // Validate required fields
+    // validate required fields
     if (!arrivalDate || !address) {
       return res.status(400).json({
         message: "Arrival date and address are required.",
@@ -34,7 +31,7 @@ router.post("/", requireAuth, async (req, res) => {
       });
     }
 
-    // Create order object matching your schema EXACTLY
+    // create order object matching your schema EXACTLY
     const order = new Order({
       user: req.user._id, // REAL ObjectId from auth middleware
 
@@ -67,7 +64,7 @@ router.post("/", requireAuth, async (req, res) => {
       },
     });
 
-    // Save and return
+    // save and return
     const saved = await order.save();
     return res.status(201).json(saved);
   } catch (err) {
@@ -76,9 +73,7 @@ router.post("/", requireAuth, async (req, res) => {
   }
 });
 
-/**
- * GET /api/orders/my
- */
+/* GET /api/orders/my */
 router.get("/my", requireAuth, async (req, res) => {
   try {
     const orders = await Order.find({ user: req.user._id }).sort({
@@ -91,9 +86,7 @@ router.get("/my", requireAuth, async (req, res) => {
   }
 });
 
-/**
- * GET /api/orders/:id
- */
+/* GET /api/orders/:id */
 router.get("/:id", async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);

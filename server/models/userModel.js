@@ -1,4 +1,3 @@
-// server/models/userModel.js
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
@@ -6,8 +5,7 @@ const userSchema = new mongoose.Schema(
     name: {
       type: String,
       trim: true,
-      // You can make this required if you want:
-      // required: true,
+    
     },
     email: {
       type: String,
@@ -27,7 +25,6 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-// Optional: remove passwordHash when sending as JSON
 userSchema.set("toJSON", {
   transform(doc, ret) {
     delete ret.passwordHash;

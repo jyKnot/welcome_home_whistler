@@ -1,4 +1,3 @@
-// client/src/pages/Register.jsx
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "../styles/form.css";
@@ -13,7 +12,7 @@ export default function Register() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
-  // NEW: redirect if already logged in
+  // redirect if already logged in
   const [checkingUser, setCheckingUser] = useState(true);
 
   useEffect(() => {

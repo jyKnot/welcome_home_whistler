@@ -1,6 +1,4 @@
-// client/src/api/orders.js
-
-// 👇 Hit the backend directly on port 4000
+// hit the backend directly on port 4000
 const API_BASE_URL = "http://localhost:4000/api";
 
 function apiUrl(path) {
@@ -9,20 +7,17 @@ function apiUrl(path) {
 
 /* CREATE ORDER */
 export async function createOrder(orderPayload) {
-  console.log("🟦 createOrder() CALLED with:", orderPayload);
-
   let res;
+
   try {
-    console.log("🌐 calling fetch:", apiUrl("/orders"));
     res = await fetch(apiUrl("/orders"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
       body: JSON.stringify(orderPayload),
     });
-    console.log("🟩 FETCH COMPLETED, STATUS:", res.status);
   } catch (networkErr) {
-    console.error("🛑 NETWORK ERROR in createOrder:", networkErr);
+    console.error("Network error in createOrder:", networkErr);
     throw new Error("Network error talking to the server.");
   }
 
@@ -30,15 +25,14 @@ export async function createOrder(orderPayload) {
     throw new Error("Please sign in to place an order.");
   }
 
+  // Read raw text so it can handle invalid JSON
   const raw = await res.text();
-  console.log("🟨 RAW RESPONSE (createOrder):", raw);
 
   let data;
   try {
     data = JSON.parse(raw);
-    console.log("🟪 JSON PARSED (createOrder):", data);
   } catch (err) {
-    console.error("🟥 JSON PARSE ERROR (createOrder):", raw);
+    console.error("JSON parse error (createOrder):", raw);
     throw new Error("Order failed — server returned invalid JSON.");
   }
 
@@ -53,19 +47,16 @@ export async function createOrder(orderPayload) {
 
 /* GET MY ORDERS */
 export async function getMyOrders() {
-  console.log("🟦 getMyOrders() CALLED");
-
   let res;
+
   try {
-    console.log("🌐 calling fetch:", apiUrl("/orders/my"));
     res = await fetch(apiUrl("/orders/my"), {
       method: "GET",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
     });
-    console.log("🟩 FETCH COMPLETED (my orders), STATUS:", res.status);
   } catch (networkErr) {
-    console.error("🛑 NETWORK ERROR in getMyOrders:", networkErr);
+    console.error("Network error in getMyOrders:", networkErr);
     throw new Error("Network error talking to the server.");
   }
 
@@ -74,14 +65,12 @@ export async function getMyOrders() {
   }
 
   const raw = await res.text();
-  console.log("🟨 RAW RESPONSE (my orders):", raw);
 
   let data;
   try {
     data = JSON.parse(raw);
-    console.log("🟪 JSON PARSED (my orders):", data);
   } catch (err) {
-    console.error("🟥 JSON PARSE ERROR (my orders):", raw);
+    console.error("JSON parse error (getMyOrders):", raw);
     throw new Error("Server returned invalid JSON when fetching your orders.");
   }
 
@@ -91,6 +80,7 @@ export async function getMyOrders() {
     throw new Error(message);
   }
 
+  // Expected shapes
   if (Array.isArray(data)) return data;
   if (Array.isArray(data.orders)) return data.orders;
 

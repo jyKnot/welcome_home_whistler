@@ -1,4 +1,3 @@
-// client/src/pages/Login.jsx
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "../styles/form.css";
@@ -74,7 +73,7 @@ export default function Login() {
   return (
     <section className="arrival-layout">
 
-      {/* LEFT SIDE — NOW IN A CARD */}
+      {/* LEFT SIDE - CARD */}
       <div className="arrival-form-col">
         <div className="arrival-form-card">
           <form onSubmit={handleSubmit}>

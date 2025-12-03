@@ -1,4 +1,3 @@
-// client/src/App.jsx
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home.jsx";
 import Groceries from "./pages/Groceries.jsx";
@@ -14,7 +13,6 @@ export default function App() {
     <Router>
       <Header />
       <Routes>
-        {/* ✅ Homepage is NOW Home.jsx */}
         <Route path="/" element={<Home />} />
 
         {/* Groceries flow */}

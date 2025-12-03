@@ -1,4 +1,3 @@
-// client/src/pages/Arrival.jsx
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import "../styles/form.css";
@@ -250,7 +249,7 @@ export default function Arrival() {
             <strong>${grandTotal.toFixed(2)}</strong>
           </div>
 
-          {/* Checkout button ALWAYS shown */}
+          {/* Checkout button - always shown */}
           <div className="arrival-summary-footer">
             <button
               className="arrival-summary-btn"

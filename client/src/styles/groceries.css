@@ -8,7 +8,7 @@
   margin-top: 0;
 }
 
-/* Filters row */
+/* filters row */
 .filters {
   display: flex;
   flex-wrap: wrap;
@@ -33,7 +33,7 @@
   flex: 0 0 180px;
 }
 
-/* Grid layout */
+/* grid layout */
 .grid {
   list-style: none;
   padding: 0;
@@ -43,7 +43,7 @@
   gap: 1rem;
 }
 
-/* Card */
+/* card */
 .card {
   background: #fff;
   border-radius: 12px;
@@ -99,7 +99,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: background 0.2s ease, transform 0.05s ease;
-  margin-top: auto;      /* 👈 this is the magic */
+  margin-top: auto;     
 }
 
 .add-btn:hover {
@@ -110,7 +110,7 @@
   transform: scale(0.98);
 }
 
-/* Helper text */
+/* helper text */
 .muted {
   color: #98a2b3;
 }

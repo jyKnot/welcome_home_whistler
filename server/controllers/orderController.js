@@ -1,4 +1,3 @@
-// server/controllers/orderController.js
 import Order from "../models/Order.js";
 
 const ADDON_PRICES = {
@@ -33,7 +32,7 @@ export async function createOrder(req, res) {
         .json({ message: "Order must contain at least one cart item." });
     }
 
-    // Normalize items to match schema
+    // normalize items to match schema
     const items = cartItems.map((item) => ({
       productId: item.id,
       name: item.name,
@@ -42,7 +41,7 @@ export async function createOrder(req, res) {
       quantity: item.quantity,
     }));
 
-    // Recalculate totals on the server
+    // recalculate totals on the server
     const groceriesTotal = items.reduce(
       (sum, item) => sum + item.price * item.quantity,
       0

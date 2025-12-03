@@ -1,4 +1,4 @@
-/* Sliding cart sidebar */
+/* sliding cart sidebar */
 .cart-sidebar {
   position: fixed;
   top: 0;
@@ -13,7 +13,7 @@
   flex-direction: column;
   transition: right 0.3s ease;
   z-index: 30;
-  box-sizing: border-box; /* 👈 key line */
+  box-sizing: border-box; 
 }
 
 .cart-sidebar.open {
@@ -41,7 +41,7 @@
   line-height: 1;
 }
 
-/* Overlay behind cart */
+/* overlay behind cart */
 .cart-overlay {
   position: fixed;
   inset: 0;
@@ -49,7 +49,7 @@
   z-index: 20;
 }
 
-/* Cart content */
+/* cart content */
 .cart-empty {
   margin-top: 1rem;
   color: #64748b;
@@ -93,7 +93,7 @@
   cursor: pointer;
 }
 
-/* Quantity + Price row */
+/* quantity + price row */
 .cart-item-footer {
   margin-top: 0.35rem;
   display: flex;
@@ -126,7 +126,7 @@
   color: #0f172a;
 }
 
-/* Summary */
+/* summary */
 .cart-summary {
   border-top: 1px solid #e2e8f0;
   padding-top: 0.75rem;
@@ -155,7 +155,7 @@
   background: #004a99;
 }
 
-/* Floating button to open cart */
+/* floating button to open cart */
 .cart-floating-btn {
   position: fixed;
   right: 1.5rem;

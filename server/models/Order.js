@@ -1,10 +1,9 @@
-// server/models/Order.js
 import mongoose from "mongoose";
 
 const orderItemSchema = new mongoose.Schema(
   {
     productId: {
-      type: Number, // or String if needed
+      type: Number, 
       required: true,
     },
     name: {

@@ -1,9 +1,8 @@
-// client/src/pages/OrderConfirmation.jsx
 import { useLocation, useNavigate } from "react-router-dom";
 import "../styles/arrival.css";
 import "../styles/form.css";
 
-// Mirror the add-on prices used in Arrival.jsx
+// mirror the add-on prices used in Arrival.jsx
 const ADDON_PRICES = {
   warmHome: 45,
   lightsOn: 20,
@@ -19,11 +18,11 @@ export default function OrderConfirmation() {
   const orderFromServer = location.state?.order;
   const fallbackPayload = location.state?.fallback;
 
-  // Prefer server response, fall back to client payload if needed
+  // prefer server response, fall back to client payload if needed
   const order = orderFromServer || fallbackPayload;
 
   if (!order) {
-    // If user hits this URL directly or refreshes without state
+    // if user hits this URL directly or refreshes without state
     return (
       <section className="arrival-layout">
         <div className="arrival-form-col">
@@ -44,7 +43,7 @@ export default function OrderConfirmation() {
     );
   }
 
-  // 🔴 NEW: read nested arrival/items/addOns/totals shape
+  // read nested arrival/items/addOns/totals shape
   const arrival = order.arrival || fallbackPayload?.arrival || {};
   const addOns = order.addOns || fallbackPayload?.addOns || {};
   const items = order.items || fallbackPayload?.items || [];
@@ -56,22 +55,22 @@ export default function OrderConfirmation() {
   const address = arrival.address || "Not specified";
   const notes = arrival.notes || "";
 
-  // ---- TOTALS: prefer server totals, otherwise fallback, otherwise recalc ----
+  // totals: prefer server totals, otherwise fallback, otherwise recalc ----
   const fallbackTotals = fallbackPayload?.totals || {};
 
-  // Selected add-ons from the order
+  // selected add-ons from the order
   const selectedAddOns = Object.entries(addOns).filter(
     ([, selected]) => selected
   );
 
-  // Base totals object from any source that has it
+  // base totals object from any source that has it
   const rawTotals = {
     groceries: orderTotals.groceries ?? fallbackTotals.groceries,
     addOns: orderTotals.addOns ?? fallbackTotals.addOns,
     grandTotal: orderTotals.grandTotal ?? fallbackTotals.grandTotal,
   };
 
-  // Groceries total: use provided, or compute from items
+  // groceries total: use provided, or compute from items
   const groceriesTotal =
     typeof rawTotals.groceries === "number"
       ? rawTotals.groceries
@@ -80,7 +79,7 @@ export default function OrderConfirmation() {
           0
         );
 
-  // Add-ons total: use provided, or compute from selected add-ons + ADDON_PRICES
+  // add-ons total: use provided, or compute from selected add-ons + ADDON_PRICES
   const computedAddOnsFromSelection = selectedAddOns.reduce(
     (sum, [key]) => sum + (ADDON_PRICES[key] || 0),
     0
@@ -91,7 +90,7 @@ export default function OrderConfirmation() {
       ? rawTotals.addOns
       : computedAddOnsFromSelection;
 
-  // Grand total: use provided, or derive from parts
+  // grand total: use provided, or derive from parts
   const grandTotal =
     typeof rawTotals.grandTotal === "number"
       ? rawTotals.grandTotal

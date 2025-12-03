@@ -1,4 +1,3 @@
-// server.js
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
@@ -14,14 +13,12 @@ dotenv.config();
 
 const app = express();
 
-// -------------------------------------------
-// 🧪 TEST ENVIRONMENT HANDLING
-// -------------------------------------------
+
+// test environemnt handeling
 const isTest = process.env.NODE_ENV === "test";
 
-// -------------------------------------------
-// MONGO CONNECTION (DISABLED IN TESTS)
 
+// Mongo connection (disabled in tests)
 if (!isTest) {
   console.log("Connecting to MongoDB...");
 
@@ -36,9 +33,7 @@ if (!isTest) {
   console.log("MongoDB connection skipped in test environment");
 }
 
-
-// MIDDLEWARE
-
+// middleware
 app.use(helmet());
 app.use(morgan("dev"));
 app.use(
@@ -51,9 +46,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-
-//  ROUTES
-
+//  routes
 app.use("/api/auth", authRoutes);
 app.use("/api/groceries", groceryRoutes);
 app.use("/api/orders", orderRoutes);
@@ -62,14 +55,11 @@ app.get("/", (req, res) => {
   res.send("Welcome Home Whistler API running locally!");
 });
 
-
-// EXPORT APP FOR JEST (no server running)
-
+// export app
 export default app;
 
 
-// START SERVER (ONLY OUTSIDE TEST)
-
+// start server (only if outside of test)
 if (!isTest) {
   const PORT = process.env.PORT || 4000;
   app.listen(PORT, () => {

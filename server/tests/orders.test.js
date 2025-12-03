@@ -1,4 +1,3 @@
-// server/tests/orders.test.js
 import request from "supertest";
 import app from "../../server.js";
 
@@ -12,7 +11,7 @@ describe("Welcome Home Whistler API", () => {
 });
 
 describe("Orders API", () => {
-  // 1) Existing negative test – missing arrivalDate and address
+  // 1) existing negative test – missing arrivalDate and address
   test("POST /api/orders should return 400 if required fields are missing", async () => {
     const res = await request(app)
       .post("/api/orders")
@@ -28,7 +27,7 @@ describe("Orders API", () => {
     );
   });
 
-  // 2) Happy path – valid order creates successfully
+  // 2) happy path – valid order creates successfully
   test("POST /api/orders should create an order when payload is valid", async () => {
     const validPayload = {
       arrivalDate: "2025-12-20",
@@ -55,15 +54,12 @@ describe("Orders API", () => {
 
     const res = await request(app).post("/api/orders").send(validPayload);
 
-    // Adjust to match your implementation if you’re using 200 instead of 201
     expect([200, 201]).toContain(res.statusCode);
 
-    // We make minimal assumptions about response shape so tests are flexible
     expect(res.headers["content-type"]).toMatch(/json/i);
     expect(res.body).toBeDefined();
     expect(typeof res.body).toBe("object");
 
-    // Either the order is returned at top level OR nested – this covers both
     const order = res.body.order || res.body;
 
     expect(order).toMatchObject({
@@ -109,7 +105,6 @@ describe("Orders API", () => {
     expect(res.body.message.toLowerCase()).toContain("cart");
   });
 
-  // 5) Optional: basic email validation if you decide to enforce it
   test("POST /api/orders should return 400 if contactEmail is clearly invalid", async () => {
     const res = await request(app)
       .post("/api/orders")
@@ -128,7 +123,7 @@ describe("Orders API", () => {
         contactEmail: "not-an-email",
       });
 
-    // If you don't validate email yet, this will fail – which is your TDD nudge
+    // if you don't validate email yet, this will fail 
     expect(res.statusCode).toBe(400);
     expect(res.body).toHaveProperty("message");
     expect(res.body.message.toLowerCase()).toContain("email");

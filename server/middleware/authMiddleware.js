@@ -1,4 +1,3 @@
-// server/middleware/authMiddleware.js
 import jwt from "jsonwebtoken";
 import User from "../models/userModel.js";
 
@@ -12,17 +11,17 @@ export async function requireAuth(req, res, next) {
       return res.status(401).json({ message: "Please sign in." });
     }
 
-    // Verify JWT
+    // verify JWT
     const decoded = jwt.verify(token, JWT_SECRET);
 
-    // Find the authenticated user
+    // find the authenticated user
     const user = await User.findById(decoded.userId);
 
     if (!user) {
       return res.status(401).json({ message: "User not found." });
     }
 
-    // Attach full user object
+    // attach full user object
     req.user = {
       _id: user._id,
       name: user.name,
