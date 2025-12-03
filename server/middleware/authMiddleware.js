@@ -1,17 +1,38 @@
 // server/middleware/authMiddleware.js
-export function requireAuth(req, res, next) {
-  // 🧪 In test environment, skip real auth and inject a fake user
-  if (process.env.NODE_ENV === "test") {
-    req.user = { _id: "test-user-id" };
-    return next();
+import jwt from "jsonwebtoken";
+import User from "../models/userModel.js";
+
+const JWT_SECRET = process.env.JWT_SECRET || "dev_secret_change_me";
+
+export async function requireAuth(req, res, next) {
+  try {
+    const token = req.cookies?.token;
+
+    if (!token) {
+      return res.status(401).json({ message: "Please sign in." });
+    }
+
+    // Verify JWT
+    const decoded = jwt.verify(token, JWT_SECRET);
+
+    // Find the authenticated user
+    const user = await User.findById(decoded.userId);
+
+    if (!user) {
+      return res.status(401).json({ message: "User not found." });
+    }
+
+    // Attach full user object
+    req.user = {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+    };
+
+    next();
+  } catch (err) {
+    console.error("Auth error:", err);
+    return res.status(401).json({ message: "Authentication failed." });
   }
-
-  // 🔐 Your existing auth logic goes here
-  // e.g. check JWT cookie, session, etc.
-  // if not authenticated:
-  // return res.status(401).json({ message: "Unauthorized" });
-
-  // if authenticated:
-  // req.user = { _id: user._id, ... }
-  // return next();
 }
+

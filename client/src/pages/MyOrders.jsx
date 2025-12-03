@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/arrival.css";
 import "../styles/form.css";
-import { getMyOrders } from "../api/orders.js";
 
 export default function MyOrders() {
   const [orders, setOrders] = useState([]);
@@ -15,18 +14,85 @@ export default function MyOrders() {
   useEffect(() => {
     let isCancelled = false;
 
-    const fetchOrders = async () => {
+    async function fetchOrders() {
       try {
         setLoading(true);
         setError("");
 
-        const data = await getMyOrders(); // GET /api/orders/my
+        const headers = {
+          "Content-Type": "application/json",
+        };
+
+        const token =
+          localStorage.getItem("whwToken") ||
+          localStorage.getItem("token") ||
+          localStorage.getItem("authToken");
+
+        if (token) {
+          headers["Authorization"] = `Bearer ${token}`;
+        }
+
+        console.log("[MyOrders] Fetching /api/orders/my with headers:", headers);
+
+        const res = await fetch("/api/orders/my", {
+          method: "GET",
+          headers,
+          credentials: "include",
+        });
+
+        console.log("[MyOrders] Response status:", res.status);
+
+        if (res.status === 401) {
+          throw new Error("Please sign in to view your orders.");
+        }
+
+        if (!res.ok) {
+          const text = await res.text().catch(() => "");
+          console.error(
+            "[MyOrders] Non-OK response from /api/orders/my:",
+            res.status,
+            text
+          );
+          throw new Error("Failed to fetch orders.");
+        }
+
+        // Read raw text first to see if it's HTML or JSON
+        const text = await res.text();
+        console.log("[MyOrders] Raw response from /api/orders/my:", text);
+
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch (parseErr) {
+          console.error(
+            "[MyOrders] Could not parse JSON, server returned HTML or invalid JSON:",
+            parseErr
+          );
+          throw new Error(
+            "Server did not return valid JSON for /api/orders/my"
+          );
+        }
+
+        console.log("[MyOrders] Parsed JSON:", data);
+
+        let normalizedOrders = [];
+        if (Array.isArray(data)) {
+          normalizedOrders = data;
+        } else if (Array.isArray(data.orders)) {
+          normalizedOrders = data.orders;
+        } else {
+          console.warn(
+            "[MyOrders] Unexpected response shape, treating as no orders:",
+            data
+          );
+          normalizedOrders = [];
+        }
 
         if (!isCancelled) {
-          setOrders(Array.isArray(data) ? data : []);
+          setOrders(normalizedOrders);
         }
       } catch (err) {
-        console.error("MyOrders fetch error:", err);
+        console.error("[MyOrders] fetchOrders error:", err);
         if (!isCancelled) {
           if (err.message === "Please sign in to view your orders.") {
             navigate("/login");
@@ -38,12 +104,14 @@ export default function MyOrders() {
         }
       } finally {
         if (!isCancelled) {
+          console.log("[MyOrders] Setting loading to false");
           setLoading(false);
         }
       }
-    };
+    }
 
     fetchOrders();
+
     return () => {
       isCancelled = true;
     };
@@ -90,7 +158,7 @@ export default function MyOrders() {
 
           {loading && <p className="arrival-muted">Loading your orders…</p>}
 
-          {error && !loading && <p className="error">{error}</p>}
+          {!loading && error && <p className="error">{error}</p>}
 
           {!loading && !error && orders.length === 0 && (
             <p className="arrival-muted">
@@ -178,6 +246,8 @@ export default function MyOrders() {
                         >
                           Order details
                         </h4>
+
+                        {/* Items */}
                         <p className="arrival-muted" style={{ margin: 0 }}>
                           Items:
                         </p>
@@ -191,6 +261,7 @@ export default function MyOrders() {
                           ))}
                         </ul>
 
+                        {/* Add-ons */}
                         <p className="arrival-muted" style={{ margin: 0 }}>
                           Add-ons:
                         </p>
@@ -199,11 +270,14 @@ export default function MyOrders() {
                           {addOns?.lightsOn && <li>Lights on</li>}
                           {addOns?.flowers && <li>Fresh flowers</li>}
                           {addOns?.turndown && <li>Turndown service</li>}
-                          {!addOns ||
+
+                          {(!addOns ||
                             (!addOns.warmHome &&
                               !addOns.lightsOn &&
                               !addOns.flowers &&
-                              !addOns.turndown && <li>No add-ons selected</li>)}
+                              !addOns.turndown)) && (
+                            <li>No add-ons selected</li>
+                          )}
                         </ul>
 
                         <p

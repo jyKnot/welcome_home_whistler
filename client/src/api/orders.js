@@ -1,45 +1,99 @@
-// src/api/orders.js
-import { apiClient } from "./apiClient.js";
+// client/src/api/orders.js
 
-// Create a new order
-export async function createOrder(orderData) {
-  try {
-    // baseURL = "http://localhost:4000/api"
-    // so this hits POST http://localhost:4000/api/orders
-    const response = await apiClient.post("/orders", orderData);
-    return response.data; // saved Order from Mongo
-  } catch (error) {
-    console.error("Error creating order:", error);
+// 👇 Hit the backend directly on port 4000
+const API_BASE_URL = "http://localhost:4000/api";
 
-    let message =
-      error?.response?.data?.message ||
-      "Failed to create order. Please try again.";
-
-    if (error?.response?.status === 401) {
-        message = "Please sign in or create an account to place your Welcome Order.";
-    }
-
-    throw new Error(message);
-  }
+function apiUrl(path) {
+  return `${API_BASE_URL}${path}`;
 }
 
-// Get orders for the currently logged-in user
-export async function getMyOrders() {
+/* CREATE ORDER */
+export async function createOrder(orderPayload) {
+  console.log("🟦 createOrder() CALLED with:", orderPayload);
+
+  let res;
   try {
-    // Hits GET http://localhost:4000/api/orders/my
-    const response = await apiClient.get("/orders/my");
-    return response.data; // array of orders
-  } catch (error) {
-    console.error("Error fetching orders:", error);
+    console.log("🌐 calling fetch:", apiUrl("/orders"));
+    res = await fetch(apiUrl("/orders"), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(orderPayload),
+    });
+    console.log("🟩 FETCH COMPLETED, STATUS:", res.status);
+  } catch (networkErr) {
+    console.error("🛑 NETWORK ERROR in createOrder:", networkErr);
+    throw new Error("Network error talking to the server.");
+  }
 
-    let message =
-      error?.response?.data?.message ||
-      "Failed to fetch your orders. Please try again.";
+  if (res.status === 401) {
+    throw new Error("Please sign in to place an order.");
+  }
 
-    if (error?.response?.status === 401) {
-      message = "Please sign in to view your orders.";
-    }
+  const raw = await res.text();
+  console.log("🟨 RAW RESPONSE (createOrder):", raw);
 
+  let data;
+  try {
+    data = JSON.parse(raw);
+    console.log("🟪 JSON PARSED (createOrder):", data);
+  } catch (err) {
+    console.error("🟥 JSON PARSE ERROR (createOrder):", raw);
+    throw new Error("Order failed — server returned invalid JSON.");
+  }
+
+  if (!res.ok) {
+    const message =
+      data?.message || `Failed to create order (status ${res.status})`;
     throw new Error(message);
   }
+
+  return data;
+}
+
+/* GET MY ORDERS */
+export async function getMyOrders() {
+  console.log("🟦 getMyOrders() CALLED");
+
+  let res;
+  try {
+    console.log("🌐 calling fetch:", apiUrl("/orders/my"));
+    res = await fetch(apiUrl("/orders/my"), {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    });
+    console.log("🟩 FETCH COMPLETED (my orders), STATUS:", res.status);
+  } catch (networkErr) {
+    console.error("🛑 NETWORK ERROR in getMyOrders:", networkErr);
+    throw new Error("Network error talking to the server.");
+  }
+
+  if (res.status === 401) {
+    throw new Error("Please sign in to view your orders.");
+  }
+
+  const raw = await res.text();
+  console.log("🟨 RAW RESPONSE (my orders):", raw);
+
+  let data;
+  try {
+    data = JSON.parse(raw);
+    console.log("🟪 JSON PARSED (my orders):", data);
+  } catch (err) {
+    console.error("🟥 JSON PARSE ERROR (my orders):", raw);
+    throw new Error("Server returned invalid JSON when fetching your orders.");
+  }
+
+  if (!res.ok) {
+    const message =
+      data?.message || `Failed to fetch orders (status ${res.status})`;
+    throw new Error(message);
+  }
+
+  if (Array.isArray(data)) return data;
+  if (Array.isArray(data.orders)) return data.orders;
+
+  console.warn("[getMyOrders] Unexpected response shape:", data);
+  return [];
 }
