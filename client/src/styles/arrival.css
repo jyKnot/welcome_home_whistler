@@ -4,21 +4,22 @@
   margin: 0 auto;
   padding: 2rem;
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); /* left wider than right */
+  grid-template-columns: 1fr 1fr; 
   gap: 2rem;
-  align-items: flex-start; /* top-align both columns */
+  align-items: flex-start;
 }
 
 .arrival-summary-col {
   position: sticky;
   top: 5rem;    
   align-self: flex-start;
+  min-width: 0;
 }
 
 /* Left column: form */
 .arrival-form-col {
   display: flex;
-  flex-direction: column;
+  justify-content: center;      /* center the form card */
 }
 
 /* Form labels/inputs */
@@ -86,18 +87,32 @@
   align-self: flex-start; /* top aligned */
 }
 
-.arrival-summary-card {
+.arrival-form-card {
+  width: 100%;
+  max-width: 520px;             /* ⭐ matches your summary card visual width */
   background: #ffffff;
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
   padding: 1.5rem;
 }
 
-.arrival-summary-card h3 {
+.arrival-form-card,
+.arrival-summary-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  padding: 1.5rem;
+  height: 100%;    
+  box-sizing: border-box;
+}
+
+.arrival-summary-card h3,
+.arrival-form-card h2 {
   margin-top: 0;
   margin-bottom: 1rem;
   color: #004a99;
 }
+
 
 .arrival-muted {
   color: #94a3b8;
@@ -238,45 +253,3 @@
   color: #ffffff;
 }
 
-/* Order ID line */
-.arrival-order-id {
-  margin: 0 0 1rem 0;
-  font-size: 0.9rem;
-  color: #64748b;
-}
-
-/* Confirmation detail rows */
-.arrival-confirm-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 0.35rem 0;
-  font-size: 0.95rem;
-  border-bottom: 1px solid #edf2f7;
-}
-
-.arrival-confirm-row span {
-  color: #64748b;
-}
-
-.arrival-confirm-row strong {
-  color: #0f172a;
-}
-
-/* Confirmation notes */
-.arrival-confirm-notes {
-  margin-top: 0.75rem;
-}
-
-.arrival-confirm-notes-label {
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: #94a3b8;
-  margin-bottom: 0.25rem;
-}
-
-.arrival-confirm-notes p {
-  margin: 0;
-  font-size: 0.95rem;
-  color: #0f172a;
-}

@@ -45,7 +45,7 @@ export default function Header() {
         <div className="whw-header-inner">
           {/* Brand */}
           <button className="whw-brand" onClick={() => navigate("/")}>
-            <span className="whw-brand-mark">🏔️</span>
+            <span className="whw-brand-mark">△</span>
             <span className="whw-brand-text">Welcome Home Whistler</span>
           </button>
 

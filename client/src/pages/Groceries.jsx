@@ -17,7 +17,7 @@ export default function Groceries() {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
-  // Load logged-in user from localStorage
+  // Load logged-in user
   useEffect(() => {
     try {
       const stored = localStorage.getItem("whwUser");
@@ -31,6 +31,7 @@ export default function Groceries() {
     navigate("/arrival", { state: { cartItems } });
   };
 
+  // Fetch groceries
   useEffect(() => {
     let cancel = false;
 
@@ -40,11 +41,9 @@ export default function Groceries() {
         setErr("");
 
         const res = await fetch("http://localhost:4000/api/groceries");
-
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
         const data = await res.json();
-
         if (!cancel) {
           const withPrices = (data || []).map((item) => ({
             ...item,
@@ -111,9 +110,7 @@ export default function Groceries() {
   const handleIncrement = (id) => {
     setCartItems((prev) =>
       prev.map((item) =>
-        item.id === id
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
+        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
       )
     );
   };
@@ -166,13 +163,13 @@ export default function Groceries() {
         onContinue={handleContinueToArrival}
       />
 
-      {/* Overlay behind cart */}
+      {/* Overlay */}
       {cartOpen && <div className="cart-overlay" onClick={() => setCartOpen(false)} />}
 
       {/* Main groceries content */}
       <div className="groceries-wrap">
 
-        {/* 🚨 WARNING BANNER (only when not logged in) */}
+        {/* 🚨 WARNING banner when not logged in */}
         {!isLoggedIn && (
           <div
             style={{
@@ -202,11 +199,37 @@ export default function Groceries() {
               }}
             >
               Sign in or create one
-            </button>
-            {" "}before continuing to arrival details.
+            </button>{" "}
+            before continuing to arrival details.
           </div>
         )}
 
+        {/* ⭐ NEW: Skip Groceries button */}
+        <div
+          style={{
+            marginBottom: "1.25rem",
+            display: "flex",
+            justifyContent: "flex-end",
+          }}
+        >
+          <button
+            onClick={() => navigate("/arrival", { state: { cartItems: [] } })}
+            style={{
+              background: "#f1f5f9",
+              border: "1px solid #e2e8f0",
+              padding: "0.6rem 1rem",
+              borderRadius: "10px",
+              cursor: "pointer",
+              color: "#004a99",
+              fontSize: "0.95rem",
+              fontWeight: 500,
+            }}
+          >
+            Skip groceries → Arrival details
+          </button>
+        </div>
+
+        {/* Filters */}
         <div className="filters">
           <input
             value={q}
@@ -250,7 +273,7 @@ export default function Groceries() {
         )}
       </div>
 
-      {/* Floating "View order" button */}
+      {/* Floating "view order" btn */}
       {totalItems > 0 && (
         <button
           className="cart-floating-btn"

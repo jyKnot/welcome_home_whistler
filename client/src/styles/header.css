@@ -1,6 +1,6 @@
-/* -------------------------------------- */
-/* HEADER WRAPPER                         */
-/* -------------------------------------- */
+
+/* HEADER WRAPPER  */
+
 
 .whw-header {
   position: sticky;
@@ -20,9 +20,8 @@
   align-items: center;
 }
 
-/* -------------------------------------- */
-/* BRAND                                  */
-/* -------------------------------------- */
+
+/* BRAND  */
 
 .whw-brand {
   display: inline-flex;
@@ -38,9 +37,9 @@
   font-weight: 600;
 }
 
-/* -------------------------------------- */
-/* NAV BUTTONS (Unified style)            */
-/* -------------------------------------- */
+
+/* NAV BUTTONS (Unified style)  */
+
 
 .whw-nav-btn,
 .whw-nav-mobile-btn {
@@ -82,9 +81,8 @@
   color: white;
 }
 
-/* -------------------------------------- */
+
 /* MOBILE NAV                             */
-/* -------------------------------------- */
 
 .whw-nav-desktop {
   display: flex;
