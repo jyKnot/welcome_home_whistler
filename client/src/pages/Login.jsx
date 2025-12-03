@@ -73,62 +73,67 @@ export default function Login() {
 
   return (
     <section className="arrival-layout">
+
+      {/* LEFT SIDE — NOW IN A CARD */}
       <div className="arrival-form-col">
-        <form onSubmit={handleSubmit}>
-          <h2>Sign in</h2>
-          <p className="arrival-muted">Log in to manage your Welcome Orders.</p>
+        <div className="arrival-form-card">
+          <form onSubmit={handleSubmit}>
+            <h2>Sign in</h2>
+            <p className="arrival-muted">Log in to manage your Welcome Orders.</p>
 
-          <label className="arrival-label">
-            Email
-            <input
-              type="email"
-              required
-              value={email}
-              autoComplete="email"
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </label>
-
-          <label className="arrival-label">
-            Password
-            <div className="password-wrapper">
+            <label className="arrival-label">
+              Email
               <input
-                type={showPassword ? "text" : "password"}
+                type="email"
                 required
-                autoComplete="current-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={email}
+                autoComplete="email"
+                onChange={(e) => setEmail(e.target.value)}
               />
-              <span
-                className="password-eye"
-                onClick={() => setShowPassword((p) => !p)}
-              >
-                {showPassword ? "🙈" : "👁️"}
-              </span>
-            </div>
-          </label>
+            </label>
 
-          {error && <p className="error">{error}</p>}
+            <label className="arrival-label">
+              Password
+              <div className="password-wrapper">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  required
+                  autoComplete="current-password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <span
+                  className="password-eye"
+                  onClick={() => setShowPassword((p) => !p)}
+                >
+                  {showPassword ? "🙈" : "👁️"}
+                </span>
+              </div>
+            </label>
 
-          <button type="submit" disabled={submitting}>
-            {submitting ? "Signing in…" : "Sign in"}
-          </button>
+            {error && <p className="error">{error}</p>}
 
-          <p className="arrival-muted">
-            Don&apos;t have an account?{" "}
-            <Link to="/register">Create one here.</Link>
-          </p>
+            <button type="submit" disabled={submitting}>
+              {submitting ? "Signing in…" : "Sign in"}
+            </button>
 
-          <button
-            type="button"
-            className="arrival-back-btn"
-            onClick={() => navigate("/")}
-          >
-            ← Back to home
-          </button>
-        </form>
+            <p className="arrival-muted">
+              Don&apos;t have an account?{" "}
+              <Link to="/register">Create one here.</Link>
+            </p>
+
+            <button
+              type="button"
+              className="arrival-back-btn"
+              onClick={() => navigate("/")}
+            >
+              ← Back to home
+            </button>
+          </form>
+        </div>
       </div>
 
+      {/* RIGHT INFO CARD */}
       <div className="arrival-summary-col">
         <div className="arrival-summary-card">
           <h3>Why sign in?</h3>
@@ -137,6 +142,7 @@ export default function Login() {
           </p>
         </div>
       </div>
+
     </section>
   );
 }

@@ -1,8 +1,7 @@
 // client/src/pages/Home.jsx
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import "../styles/arrival.css";
-import "../styles/form.css";
+import "../styles/home.css";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -11,56 +10,40 @@ export default function Home() {
   useEffect(() => {
     try {
       const stored = localStorage.getItem("whwUser");
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        console.log("Home loaded user from localStorage:", parsed);
-        setUser(parsed);
-      } else {
-        console.log("Home: no whwUser in localStorage");
-      }
-    } catch (err) {
-      console.error("Error reading whwUser from localStorage:", err);
-    }
+      if (stored) setUser(JSON.parse(stored));
+    } catch {}
   }, []);
 
   const isLoggedIn = !!user;
-  console.log("Home isLoggedIn =", isLoggedIn);
 
   return (
-    <section className="arrival-layout">
-      {/* LEFT: Hero copy */}
-      <div className="arrival-form-col">
-        <h1 style={{ marginTop: 0, marginBottom: "0.5rem" }}>
+    <section className="home-layout">
+      
+      {/* LEFT COLUMN */}
+      <div className="home-hero-col">
+        <h1 className="home-hero-title">
           Arrive in Whistler to a warm, stocked home.
         </h1>
-        <p className="arrival-muted" style={{ fontSize: "0.95rem" }}>
+
+        <p className="home-hero-text">
           Welcome Home Whistler is a concierge-style web app for second
           homeowners. Schedule your arrival, choose groceries and home add-ons,
           and we&apos;ll have everything ready before you walk in the door.
         </p>
 
-        <div
-          style={{
-            marginTop: "1.5rem",
-            display: "flex",
-            gap: "0.75rem",
-            flexWrap: "wrap",
-          }}
-        >
+        <div className="home-buttons">
           <button
             type="button"
+            className="home-primary-btn"
             onClick={() => navigate("/groceries")}
-            className="arrival-summary-btn"
           >
             Start a Welcome Order
           </button>
 
-          {/* Only show this second button when logged OUT.
-              When logged in, the top-right 'My Orders' is enough. */}
           {!isLoggedIn && (
             <button
               type="button"
-              className="arrival-summary-btn"
+              className="home-secondary-btn"
               onClick={() => navigate("/login")}
             >
               Sign in to view my orders
@@ -68,20 +51,14 @@ export default function Home() {
           )}
         </div>
 
-        <div style={{ marginTop: "2rem" }}>
-          <h3 style={{ marginBottom: "0.5rem" }}>How it works</h3>
-          <ol
-            style={{
-              paddingLeft: "1.25rem",
-              margin: 0,
-              fontSize: "0.92rem",
-            }}
-          >
-            <li style={{ marginBottom: "0.35rem" }}>
+        <div className="home-how-it-works">
+          <h3>How it works</h3>
+          <ol>
+            <li>
               <strong>Build your grocery basket</strong> with essentials, wine,
               and arrival treats.
             </li>
-            <li style={{ marginBottom: "0.35rem" }}>
+            <li>
               <strong>Choose home add-ons</strong> like warming the home,
               lights on, flowers, or turndown service.
             </li>
@@ -93,7 +70,8 @@ export default function Home() {
         </div>
       </div>
 
-      {/* RIGHT column intentionally empty for now */}
+      {/* RIGHT COLUMN (empty for spacing) */}
+      <div className="home-empty-col"></div>
     </section>
   );
 }
