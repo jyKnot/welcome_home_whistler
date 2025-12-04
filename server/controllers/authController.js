@@ -35,11 +35,12 @@ export async function register(req, res) {
 
     const token = createToken(user._id);
 
+    // UPDATED COOKIE SETTINGS
     res
       .cookie("token", token, {
         httpOnly: true,
-        sameSite: "lax",
-        secure: process.env.NODE_ENV === "production",
+        sameSite: "none",
+        secure: true,
         maxAge: 7 * 24 * 60 * 60 * 1000,
       })
       .status(201)
@@ -48,6 +49,7 @@ export async function register(req, res) {
         name: user.name,
         email: user.email,
       });
+
   } catch (err) {
     console.error("Register error:", err);
     res.status(500).json({
@@ -69,7 +71,6 @@ export async function login(req, res) {
 
     const user = await User.findOne({ email });
     if (!user || !user.passwordHash) {
-      // don't reveal which part failed
       return res.status(401).json({ message: "Invalid credentials." });
     }
 
@@ -80,11 +81,12 @@ export async function login(req, res) {
 
     const token = createToken(user._id);
 
+    // UPDATED COOKIE SETTINGS
     res
       .cookie("token", token, {
         httpOnly: true,
-        sameSite: "lax",
-        secure: process.env.NODE_ENV === "production",
+        sameSite: "none",
+        secure: true,
         maxAge: 7 * 24 * 60 * 60 * 1000,
       })
       .status(200)
@@ -93,6 +95,7 @@ export async function login(req, res) {
         name: user.name,
         email: user.email,
       });
+
   } catch (err) {
     console.error("Login error:", err);
     res
@@ -102,7 +105,6 @@ export async function login(req, res) {
 }
 
 // GET /api/auth/me
-// requireAuth attaches req.user
 export async function me(req, res) {
   try {
     if (!req.user) {
@@ -114,6 +116,7 @@ export async function me(req, res) {
       name: req.user.name,
       email: req.user.email,
     });
+
   } catch (err) {
     console.error("Me error:", err);
     res.status(500).json({ message: "Server error." });
@@ -123,14 +126,16 @@ export async function me(req, res) {
 // POST /api/auth/logout
 export async function logout(req, res) {
   try {
+    // UPDATED COOKIE SETTINGS
     res
       .clearCookie("token", {
         httpOnly: true,
-        sameSite: "lax",
-        secure: process.env.NODE_ENV === "production",
+        sameSite: "none",
+        secure: true,
       })
       .status(200)
       .json({ message: "Logged out successfully." });
+
   } catch (err) {
     console.error("Logout error:", err);
     res
