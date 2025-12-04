@@ -42,12 +42,17 @@ export default function Login() {
     setSubmitting(true);
 
     try {
-      const res = await fetch("http://localhost:4000/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ email, password }),
-      });
+      const res = await fetch(
+        import.meta.env.PROD
+          ? "https://welcome-home-whistler.onrender.com/api/auth/login"
+          : "http://localhost:4000/api/auth/login",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ email, password }),
+        }
+      );
 
       if (!res.ok) {
         let message = "Login failed. Please check your credentials.";

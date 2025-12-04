@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "../styles/groceries.css";
 import CartSidebar from "../components/CartSidebar";
 import { getGroceryPrice } from "../utils/pricing";
+import { API_BASE_URL } from "../api/config";
 
 export default function Groceries() {
   const [items, setItems] = useState([]);
@@ -40,7 +41,7 @@ export default function Groceries() {
         setLoading(true);
         setErr("");
 
-        const res = await fetch("http://localhost:4000/api/groceries");
+        const res = await fetch(`${API_BASE_URL}/groceries`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
         const data = await res.json();
@@ -164,7 +165,9 @@ export default function Groceries() {
       />
 
       {/* overlay */}
-      {cartOpen && <div className="cart-overlay" onClick={() => setCartOpen(false)} />}
+      {cartOpen && (
+        <div className="cart-overlay" onClick={() => setCartOpen(false)} />
+      )}
 
       {/* main groceries content */}
       <div className="groceries-wrap">

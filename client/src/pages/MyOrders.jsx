@@ -3,6 +3,10 @@ import { useNavigate } from "react-router-dom";
 import "../styles/arrival.css";
 import "../styles/form.css";
 
+const API_BASE_URL = import.meta.env.PROD
+  ? "https://welcome-home-whistler.onrender.com/api"
+  : "http://localhost:4000/api";
+
 export default function MyOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -33,7 +37,7 @@ export default function MyOrders() {
 
         console.log("[MyOrders] Fetching /api/orders/my with headers:", headers);
 
-        const res = await fetch("/api/orders/my", {
+        const res = await fetch(`${API_BASE_URL}/orders/my`, {
           method: "GET",
           headers,
           credentials: "include",

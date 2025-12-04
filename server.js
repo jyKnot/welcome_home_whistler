@@ -38,7 +38,10 @@ app.use(helmet());
 app.use(morgan("dev"));
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [
+      "http://localhost:5173",
+      "https://jyknot.github.io"
+    ],
     credentials: true,
   })
 );
