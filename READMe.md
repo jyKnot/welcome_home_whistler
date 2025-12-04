@@ -41,6 +41,8 @@ This project uses React, Node.js, Express, and MongoDB.
 
 ## Architecture
 
+The app is organized into three clear parts: the frontend, the backend, and the database. The backend is a REST API with routes and controllers that handle requests, while the frontend is a React single-page application made up of reusable components and client-side routing. Data flows from the client to the server and into MongoDB using JSON, keeping everything consistent across the system.
+
 ### Frontend (React)
 
 -   Pages: Home, Groceries, Arrival, Login, Register, My Orders, Order
@@ -107,11 +109,10 @@ Create client/.env:
 
 ## Deployment
 
-INSERT HERE
+Welcome Home Whistler is deployed using Render, with the backend and frontend hosted as two separate services. 
 
-Make sure to set:
-
-    VITE_API_BASE_URL=https://your-backend-url/api
+Backend URL: https://welcome-home-whistler.onrender.com
+Frontend URL: https://welcome-home-whistler-client.onrender.com
 
 ## Future Improvements
 

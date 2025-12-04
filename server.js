@@ -41,7 +41,7 @@ app.use(
     origin: [
       "http://localhost:5173",
       "https://welcome-home-whistler-client.onrender.com",
-      "https://welcome-home-whistler-client.onrender.com/"  
+      "https://welcome-home-whistler.onrender.com" 
     ],
     credentials: true,
   })

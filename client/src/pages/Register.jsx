@@ -45,20 +45,24 @@ export default function Register() {
     setSubmitting(true);
 
     try {
-      const res = await fetch("http://localhost:4000/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ name, email, password }),
-      });
+      const res = await fetch(
+        import.meta.env.PROD
+          ? "https://welcome-home-whistler.onrender.com/api/auth/register"
+          : "http://localhost:4000/api/auth/register",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ name, email, password }),
+        }
+      );
 
       if (!res.ok) {
         let message = "Registration failed. Please check your details.";
         try {
           const data = await res.json();
           if (data?.message) message = data.message;
-        } catch {
-        }
+        } catch {}
         throw new Error(message);
       }
 
