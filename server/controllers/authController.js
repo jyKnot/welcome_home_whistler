@@ -41,6 +41,8 @@ export async function register(req, res) {
         httpOnly: true,
         sameSite: "none",
         secure: true,
+        domain: "welcome-home-whistler.onrender.com",
+        path: "/", 
         maxAge: 7 * 24 * 60 * 60 * 1000,
       })
       .status(201)
@@ -87,6 +89,8 @@ export async function login(req, res) {
         httpOnly: true,
         sameSite: "none",
         secure: true,
+        domain: "welcome-home-whistler.onrender.com",
+        path: "/", 
         maxAge: 7 * 24 * 60 * 60 * 1000,
       })
       .status(200)
@@ -132,6 +136,8 @@ export async function logout(req, res) {
         httpOnly: true,
         sameSite: "none",
         secure: true,
+        domain: "welcome-home-whistler.onrender.com",
+        path: "/",
       })
       .status(200)
       .json({ message: "Logged out successfully." });
