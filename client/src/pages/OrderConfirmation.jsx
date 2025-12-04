@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import "../styles/arrival.css";
 import "../styles/form.css";
+import "../styles/layout.css"; // NEW: ensures confirmation layout styles load
 
 // mirror the add-on prices used in Arrival.jsx
 const ADDON_PRICES = {
@@ -24,8 +25,8 @@ export default function OrderConfirmation() {
   if (!order) {
     // if user hits this URL directly or refreshes without state
     return (
-      <section className="arrival-layout">
-        <div className="arrival-form-col">
+      <section className="confirmation-layout">
+        <div className="confirmation-left">
           <h2>Order not found</h2>
           <p className="arrival-muted">
             We couldn&apos;t find a recent order to show. Please start a new
@@ -55,22 +56,18 @@ export default function OrderConfirmation() {
   const address = arrival.address || "Not specified";
   const notes = arrival.notes || "";
 
-  // totals: prefer server totals, otherwise fallback, otherwise recalc ----
   const fallbackTotals = fallbackPayload?.totals || {};
 
-  // selected add-ons from the order
   const selectedAddOns = Object.entries(addOns).filter(
     ([, selected]) => selected
   );
 
-  // base totals object from any source that has it
   const rawTotals = {
     groceries: orderTotals.groceries ?? fallbackTotals.groceries,
     addOns: orderTotals.addOns ?? fallbackTotals.addOns,
     grandTotal: orderTotals.grandTotal ?? fallbackTotals.grandTotal,
   };
 
-  // groceries total: use provided, or compute from items
   const groceriesTotal =
     typeof rawTotals.groceries === "number"
       ? rawTotals.groceries
@@ -79,7 +76,6 @@ export default function OrderConfirmation() {
           0
         );
 
-  // add-ons total: use provided, or compute from selected add-ons + ADDON_PRICES
   const computedAddOnsFromSelection = selectedAddOns.reduce(
     (sum, [key]) => sum + (ADDON_PRICES[key] || 0),
     0
@@ -90,28 +86,27 @@ export default function OrderConfirmation() {
       ? rawTotals.addOns
       : computedAddOnsFromSelection;
 
-  // grand total: use provided, or derive from parts
   const grandTotal =
     typeof rawTotals.grandTotal === "number"
       ? rawTotals.grandTotal
       : groceriesTotal + addOnsTotal;
 
   return (
-    <section className="arrival-layout">
+    <section className="confirmation-layout">
       {/* LEFT COLUMN — ARRIVAL DETAILS */}
-      <div className="arrival-form-col">
+      <div className="confirmation-left">
         <h2>Welcome Order Confirmed</h2>
         <p className="arrival-muted">
           Your Whistler home is scheduled to be prepared for your arrival.
         </p>
 
         {orderFromServer?._id && (
-          <p className="arrival-order-id">
+          <p className="confirmation-order-id">
             Order ID: <strong>{orderFromServer._id}</strong>
           </p>
         )}
 
-        <div className="arrival-summary-card">
+        <div className="confirmation-card">
           <h3>Arrival Details</h3>
 
           <div className="arrival-confirm-row">
@@ -148,8 +143,8 @@ export default function OrderConfirmation() {
       </div>
 
       {/* RIGHT COLUMN — ORDER SUMMARY */}
-      <div className="arrival-summary-col">
-        <div className="arrival-summary-card">
+      <div className="confirmation-right">
+        <div className="confirmation-card">
           <h3>Order Summary</h3>
 
           {/* Groceries */}
@@ -231,3 +226,4 @@ export default function OrderConfirmation() {
     </section>
   );
 }
+

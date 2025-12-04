@@ -138,3 +138,43 @@ body {
   background: #fff;
   box-shadow: var(--shadow);
 }
+
+/* confirmation page layout  */
+
+.confirmation-layout {
+  display: flex;
+  flex-direction: row;
+  gap: 2.5rem;
+  align-items: flex-start;
+  padding: 2rem 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* left column (arrival details) */
+.confirmation-left {
+  flex: 1.2;
+  max-width: 460px;
+}
+
+/* right column (order summary) */
+.confirmation-right {
+  flex: 1.8;
+}
+
+/* order ID styling */
+.confirmation-order-id {
+  margin: 0.75rem 0 1rem;
+  word-break: break-word;
+  font-size: 0.9rem;
+  color: #334155;
+}
+
+/* shared card appearance */
+.confirmation-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  box-shadow: var(--shadow);
+  margin-top: 1rem;
+}
