@@ -40,11 +40,12 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://jyknot.github.io"
+      "https://welcome-home-whistler-client.onrender.com"
     ],
     credentials: true,
   })
 );
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
