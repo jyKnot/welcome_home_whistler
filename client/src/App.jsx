@@ -10,7 +10,7 @@ import Header from "./components/Header.jsx";
 
 export default function App() {
   return (
-    <Router basename={import.meta.env.BASE_URL}>
+    <Router>
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
